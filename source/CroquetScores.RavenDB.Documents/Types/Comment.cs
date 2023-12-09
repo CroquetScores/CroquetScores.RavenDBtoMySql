@@ -1,9 +1,11 @@
-﻿namespace CroquetScores.RavenDB.Documents.Types
+﻿using System;
+
+namespace CroquetScores.RavenDB.Documents.Types
 {
     public class Comment
     {
 
-        public string Content { get; set; } = null!;
+        public string Content { get; set; }
 
         public DateTime CreatedAt { get; set; }
 

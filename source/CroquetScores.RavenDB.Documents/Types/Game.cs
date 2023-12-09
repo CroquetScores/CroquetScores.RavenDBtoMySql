@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
 
 namespace CroquetScores.RavenDB.Documents.Types
 {
@@ -6,9 +6,9 @@ namespace CroquetScores.RavenDB.Documents.Types
     {
         public int Id { get; set; }
 
-        public Result Winner { get; set; } = null!;
+        public Result Winner { get; set; }
 
-        public Result Loser { get; set; } = null!;
+        public Result Loser { get; set; }
 
         public DateTime CreatedAt { get; set; }
     }

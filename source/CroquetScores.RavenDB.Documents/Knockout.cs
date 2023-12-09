@@ -1,4 +1,4 @@
-﻿using CroquetScores.RavenDB.Documents.Competitions;
+﻿using CroquetScores.RavenDB.Documents.Types;
 
 namespace CroquetScores.RavenDB.Documents
 {

@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.ComponentModel.DataAnnotations;
-using CroquetScores.RavenDB.Documents.Core;
+﻿using System.Collections.Generic;
 using CroquetScores.RavenDB.Documents.Types;
 
 namespace CroquetScores.RavenDB.Documents
@@ -12,7 +10,7 @@ namespace CroquetScores.RavenDB.Documents
 
         public int _LastId { get; set; }
 
-        public Tournament.Reference Tournament { get; set; } = null!;
+        public Tournament.Reference Tournament { get; set; }
 
         public bool IsArchived { get; set; }
     }

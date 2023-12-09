@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using CroquetScores.RavenDB.Documents.Core;
+﻿using System;
 using CroquetScores.RavenDB.Documents.Types;
 
 namespace CroquetScores.RavenDB.Documents
@@ -7,17 +6,16 @@ namespace CroquetScores.RavenDB.Documents
     public class Commentary : RavenDocument
     {
 
-        public Tournament.Reference Tournament { get; set; } = null!;
+        public Tournament.Reference Tournament { get; set; }
 
-        public User.Reference Commentator { get; set; } = null!;
+        public User.Reference Commentator { get; set; }
 
-        public string Title { get; set; } = null!;
+        public string Title { get; set; }
 
-        [Required]
-        public Comments Comments { get; set; } = null!;
+        public Comments Comments { get; set; }
 
         public bool IsArchived { get; set; }
 
-        public DateTime? LastUpdate { get; set; } = null!;
+        public DateTime? LastUpdate { get; set; }
     }
 }

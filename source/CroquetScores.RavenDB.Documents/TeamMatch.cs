@@ -1,4 +1,5 @@
-﻿using CroquetScores.RavenDB.Documents.Competitions;
+﻿using System;
+using CroquetScores.RavenDB.Documents.Types;
 
 namespace CroquetScores.RavenDB.Documents
 {
@@ -7,9 +8,9 @@ namespace CroquetScores.RavenDB.Documents
     public class TeamMatch : Competition
     {
 
-        public string TeamA { get; set; } = null!;
+        public string TeamA { get; set; }
 
-        public string TeamB { get; set; } = null!;
+        public string TeamB { get; set; }
 
         public DateTime Start { get; set; }
 
@@ -19,6 +20,6 @@ namespace CroquetScores.RavenDB.Documents
 
         public int BestOf { get; set; }
 
-        public string Group { get; set; } = null!;
+        public string Group { get; set; }
     }
 }

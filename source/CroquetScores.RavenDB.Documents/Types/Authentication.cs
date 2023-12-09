@@ -1,4 +1,6 @@
-﻿namespace CroquetScores.RavenDB.Documents.Types
+﻿using System;
+
+namespace CroquetScores.RavenDB.Documents.Types
 {
     public class Authentication
     {

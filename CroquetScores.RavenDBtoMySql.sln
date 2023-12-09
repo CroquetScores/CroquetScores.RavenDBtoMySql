@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34309.116
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CroquetScores.RavenDBtoMySql", "source\CroquetScores.RavenDBtoMySql\CroquetScores.RavenDBtoMySql.csproj", "{82713796-54AC-4782-80DF-709A0FF23D66}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CroquetScores.RavenDBtoMySql", "source\CroquetScores.RavenDBtoMySql\CroquetScores.RavenDBtoMySql.csproj", "{C222D628-9B7A-4A01-BA46-2E81AF829A30}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CroquetScores.RavenDB.Documents", "source\CroquetScores.RavenDB.Documents\CroquetScores.RavenDB.Documents.csproj", "{232D2B07-C040-4B84-B946-58828E2FCB3F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CroquetScores.RavenDB.Documents", "source\CroquetScores.RavenDB.Documents\CroquetScores.RavenDB.Documents.csproj", "{C1D33896-150A-4044-8119-D3FE17386DF1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,14 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{82713796-54AC-4782-80DF-709A0FF23D66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{82713796-54AC-4782-80DF-709A0FF23D66}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{82713796-54AC-4782-80DF-709A0FF23D66}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{82713796-54AC-4782-80DF-709A0FF23D66}.Release|Any CPU.Build.0 = Release|Any CPU
-		{232D2B07-C040-4B84-B946-58828E2FCB3F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{232D2B07-C040-4B84-B946-58828E2FCB3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{232D2B07-C040-4B84-B946-58828E2FCB3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{232D2B07-C040-4B84-B946-58828E2FCB3F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C222D628-9B7A-4A01-BA46-2E81AF829A30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C222D628-9B7A-4A01-BA46-2E81AF829A30}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C222D628-9B7A-4A01-BA46-2E81AF829A30}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C222D628-9B7A-4A01-BA46-2E81AF829A30}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C1D33896-150A-4044-8119-D3FE17386DF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1D33896-150A-4044-8119-D3FE17386DF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1D33896-150A-4044-8119-D3FE17386DF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1D33896-150A-4044-8119-D3FE17386DF1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
