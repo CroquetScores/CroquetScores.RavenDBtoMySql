@@ -18,13 +18,18 @@ namespace CroquetScores.RavenDBtoMySql
                 Console.WriteLine("Opening document store...");
                 using (var documentStore = RavenDbSupport.InitializeDocumentStore())
                 {
-                    using (var session = documentStore.OpenSession())
+                    Console.WriteLine("Opening MySql connection...");
+                    using (var connection = MySqlSupport.OpenConnection())
                     {
-                        var users = session.Query<User>().ToArray();
-
-                        Console.WriteLine($"Got {users.Length} users.");
+                        Console.WriteLine("Dropping database if it exists...");
+                        MySqlSupport.DropDatabaseIfExists(connection);
+                        
+                        Console.WriteLine("Creating the database...");
+                        MySqlSupport.CreateDatabase(connection);
                     }
                 }
+
+                Console.WriteLine("Success!");
             }
             catch (Exception exception)
             {
@@ -45,5 +50,4 @@ namespace CroquetScores.RavenDBtoMySql
 
         }
     }
-
 }
