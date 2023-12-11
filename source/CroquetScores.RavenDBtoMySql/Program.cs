@@ -18,15 +18,8 @@ namespace CroquetScores.RavenDBtoMySql
                 Console.WriteLine("Opening document store...");
                 using (var documentStore = RavenDbSupport.InitializeDocumentStore())
                 {
-                    Console.WriteLine("Opening MySql connection...");
-                    using (var connection = MySqlSupport.OpenConnection())
-                    {
-                        Console.WriteLine("Dropping database if it exists...");
-                        MySqlSupport.DropDatabaseIfExists(connection);
-                        
-                        Console.WriteLine("Creating the database...");
-                        MySqlSupport.CreateDatabase(connection);
-                    }
+                    Console.WriteLine("Creating the MySQL database...");
+                    MySqlSupport.CreateDatabase();
                 }
 
                 Console.WriteLine("Success!");

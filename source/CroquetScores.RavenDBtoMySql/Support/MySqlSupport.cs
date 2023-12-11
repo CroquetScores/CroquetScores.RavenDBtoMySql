@@ -1,11 +1,21 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Configuration;
 using MySql.Data.MySqlClient;
 
 namespace CroquetScores.RavenDBtoMySql.Support
 {
     internal class MySqlSupport
     {
-        public static MySqlConnection OpenConnection()
+        public static void CreateDatabase()
+        {
+            using (var connection = OpenConnection())
+            {
+                DropDatabaseIfExists(connection);
+                CreateDatabase(connection);
+            }
+        }
+
+        private static MySqlConnection OpenConnection()
         {
             var connectionString = $"server={ConfigurationManager.AppSettings["MySql:server"]};" +
                                    $"user={ConfigurationManager.AppSettings["MySql:User"]};" +
@@ -18,14 +28,14 @@ namespace CroquetScores.RavenDBtoMySql.Support
             return connection;
         }
 
-        public static void DropDatabaseIfExists(MySqlConnection connection)
+        private static void DropDatabaseIfExists(MySqlConnection connection)
         {
             var command = connection.CreateCommand();
             command.CommandText = "drop schema if exists CroquetScores";
             command.ExecuteNonQuery();
         }
 
-        public static void CreateDatabase(MySqlConnection connection)
+        private static void CreateDatabase(MySqlConnection connection)
         {
             var command = connection.CreateCommand();
             command.CommandText = "create schema CroquetScores";
