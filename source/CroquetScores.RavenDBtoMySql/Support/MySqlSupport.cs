@@ -1,5 +1,4 @@
-﻿using System;
-using System.Configuration;
+﻿using System.Configuration;
 using MySql.Data.MySqlClient;
 
 namespace CroquetScores.RavenDBtoMySql.Support
@@ -15,17 +14,21 @@ namespace CroquetScores.RavenDBtoMySql.Support
             }
         }
 
-        private static MySqlConnection OpenConnection()
+        public static MySqlConnection OpenDatabase()
         {
-            var connectionString = $"server={ConfigurationManager.AppSettings["MySql:server"]};" +
-                                   $"user={ConfigurationManager.AppSettings["MySql:User"]};" +
-                                   $"password={ConfigurationManager.AppSettings["MySql:Password"]};";
-            
+            var connectionString = GetConnectionStringWithDatabase();
             var connection = new MySqlConnection(connectionString);
 
             connection.Open();
 
             return connection;
+        }
+
+        private static void CreateDatabase(MySqlConnection connection)
+        {
+            var command = connection.CreateCommand();
+            command.CommandText = "create schema CroquetScores";
+            command.ExecuteNonQuery();
         }
 
         private static void DropDatabaseIfExists(MySqlConnection connection)
@@ -35,11 +38,29 @@ namespace CroquetScores.RavenDBtoMySql.Support
             command.ExecuteNonQuery();
         }
 
-        private static void CreateDatabase(MySqlConnection connection)
+        private static string GetConnectionStringWithDatabase()
         {
-            var command = connection.CreateCommand();
-            command.CommandText = "create schema CroquetScores";
-            command.ExecuteNonQuery();
+            return GetConnectionStringWithoutDatabase() +
+                   $"database={ConfigurationManager.AppSettings["MySql:Database"]}";
+        }
+
+        private static string GetConnectionStringWithoutDatabase()
+        {
+            var connectionString = $"server={ConfigurationManager.AppSettings["MySql:server"]};" +
+                                   $"user={ConfigurationManager.AppSettings["MySql:User"]};" +
+                                   $"password={ConfigurationManager.AppSettings["MySql:Password"]};";
+
+            return connectionString;
+        }
+
+        private static MySqlConnection OpenConnection()
+        {
+            var connectionString = GetConnectionStringWithoutDatabase();
+            var connection = new MySqlConnection(connectionString);
+
+            connection.Open();
+
+            return connection;
         }
     }
 }
