@@ -1,22 +1,18 @@
-﻿using Raven.Client.Document;
-using Raven.Client;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Web;
+using Raven.Client;
+using Raven.Client.Document;
 
 namespace CroquetScores.RavenDBtoMySql.Support
 {
-    internal class RavenDbSupport
+    internal class RavenDbDatabase
     {
-        public static IDocumentStore InitializeDocumentStore()
+        public static IDocumentStore InitializeDocumentStore(string site)
         {
-            var ravenDbConnectionString = GetRavenDbConnectionString();
+            var ravenDbConnectionString = GetRavenDbConnectionString(site);
             var values = HttpUtility.ParseQueryString(ConvertConnectionStringToQueryString(ravenDbConnectionString));
-            var documentStore = new DocumentStore()
+            var documentStore = new DocumentStore
             {
                 ApiKey = values["ApiKey"],
                 Url = values["Url"],
@@ -27,14 +23,12 @@ namespace CroquetScores.RavenDBtoMySql.Support
             return documentStore;
         }
 
-        private static string GetRavenDbConnectionString()
+        private static string GetRavenDbConnectionString(string site)
         {
-            var ravenDbConnectionString = ConfigurationManager.AppSettings["RavenDbConnectionString"];
+            var ravenDbConnectionString = ConfigurationManager.AppSettings[$"RavenDb:{site}"];
 
             if (string.IsNullOrWhiteSpace(ravenDbConnectionString))
-            {
-                throw new Exception("RavenDbConnectionString has not been set in AppSettings.config.");
-            }
+                throw new Exception($"RavenDb:{site} has not been set in AppSettings.config.");
 
             ravenDbConnectionString = ConvertConnectionStringToQueryString(ravenDbConnectionString);
 
@@ -43,7 +37,7 @@ namespace CroquetScores.RavenDBtoMySql.Support
 
         private static string ConvertConnectionStringToQueryString(string connectionString)
         {
-            return connectionString.Trim(System.Convert.ToChar(";")).Replace(";", "&");
+            return connectionString.Trim(Convert.ToChar(";")).Replace(";", "&");
         }
     }
 }

@@ -1,10 +1,5 @@
-﻿using Raven.Client.Document;
-using Raven.Client;
-using System;
-using System.Configuration;
-using System.Linq;
-using System.Web;
-using CroquetScores.RavenDB.Documents;
+﻿using System;
+using CroquetScores.RavenDBtoMySql.Importers;
 using CroquetScores.RavenDBtoMySql.Support;
 
 namespace CroquetScores.RavenDBtoMySql
@@ -15,11 +10,24 @@ namespace CroquetScores.RavenDBtoMySql
         {
             try
             {
-                Console.WriteLine("Opening document store...");
-                using (var documentStore = RavenDbSupport.InitializeDocumentStore())
+                Console.WriteLine("Creating the database...");
+                MySqlDatabase.CreateDatabase();
+
+                Console.WriteLine("Opening the database...");
+                using (var connection = MySqlDatabase.OpenDatabase())
                 {
-                    Console.WriteLine("Creating the MySQL database...");
-                    MySqlSupport.CreateDatabase();
+                    var sites = new[] { "croquetscores.com", "gateballscores.com" };
+
+                    foreach (var site in sites)
+                    {
+                        Console.WriteLine($"Opening document store for {site}...");
+                        using (var documentStore = RavenDbDatabase.InitializeDocumentStore(site))
+                        {
+                            {
+                                UsersImporter.Import(documentStore, connection, site);
+                            }
+                        }
+                    }
                 }
 
                 Console.WriteLine("Success!");
@@ -40,7 +48,6 @@ namespace CroquetScores.RavenDBtoMySql
 
                 Environment.Exit(1);
             }
-
         }
     }
 }

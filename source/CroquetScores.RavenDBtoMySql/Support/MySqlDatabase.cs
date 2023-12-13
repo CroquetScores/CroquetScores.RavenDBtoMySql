@@ -1,9 +1,11 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Configuration;
+using CroquetScores.RavenDBtoMySql.Tables;
 using MySql.Data.MySqlClient;
 
 namespace CroquetScores.RavenDBtoMySql.Support
 {
-    internal class MySqlSupport
+    internal class MySqlDatabase
     {
         public static void CreateDatabase()
         {
@@ -11,6 +13,11 @@ namespace CroquetScores.RavenDBtoMySql.Support
             {
                 DropDatabaseIfExists(connection);
                 CreateDatabase(connection);
+            }
+
+            using (var connection = OpenDatabase())
+            {
+                MySqlTables.Create(connection);
             }
         }
 
