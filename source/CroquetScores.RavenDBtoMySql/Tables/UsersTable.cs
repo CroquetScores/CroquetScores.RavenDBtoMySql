@@ -7,7 +7,7 @@ namespace CroquetScores.RavenDBtoMySql.Tables
     {
         public static void CreateTable(MySqlConnection connection)
         {
-            Console.WriteLine("Creating users table...");
+            Console.WriteLine("Creating Users table...");
             using (var command = connection.CreateCommand())
             {
                 command.CommandText = "CREATE TABLE Users (" +

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using CroquetScores.RavenDB.Documents;
 using MySql.Data.MySqlClient;
@@ -30,6 +29,7 @@ namespace CroquetScores.RavenDBtoMySql.Importers
             Console.WriteLine($"{totalCount:N0} {site} users to import...");
 
             while (moreToRead)
+            {
                 using (var session = documentStore.OpenSession())
                 {
                     var users = session.Query<User>().Where(u => u.ConfirmedAt != null).Skip(skip).Take(take).ToArray();
@@ -59,6 +59,7 @@ namespace CroquetScores.RavenDBtoMySql.Importers
                                     continue;
                                 }
                             }
+
                             ValidateStringFieldLengths(site, user, emailAddress);
                             ImportUser(connection, site, user, emailAddress);
                         }
@@ -69,17 +70,22 @@ namespace CroquetScores.RavenDBtoMySql.Importers
 
                     Console.WriteLine($"Imported {skip:N0} {site} users of {totalCount:N0}...");
                 }
+            }
+
+            Console.WriteLine($"Max email address length: {_maxEmailAddressLength}");
+            Console.WriteLine($"Max name length: {_maxNameLength}");
+            Console.WriteLine($"Max slug length: {_maxSlugLength}");
         }
 
         private static void UpdateGateballRavenDbKey(MySqlConnection connection, string emailAddress, string userId)
         {
             using (var command = connection.CreateCommand())
             {
-                command.CommandText = "UPDATE Users SET GateballScoresRavenDbKey = @GateballScoresRavenDbKey WHERE EmailAddress = @EmailAddress;";
+                command.CommandText =
+                    "UPDATE Users SET GateballScoresRavenDbKey = @GateballScoresRavenDbKey WHERE EmailAddress = @EmailAddress;";
                 command.Parameters.AddWithValue("@GateballScoresRavenDbKey", $"gateballscores.com/{userId}");
                 command.Parameters.AddWithValue("@EmailAddress", emailAddress);
                 command.ExecuteNonQuery();
-
             }
         }
 
@@ -87,7 +93,8 @@ namespace CroquetScores.RavenDBtoMySql.Importers
         {
             using (var command = connection.CreateCommand())
             {
-                command.CommandText = "SELECT Count(*) FROM Users WHERE EmailAddress = @EmailAddress AND GateballScoresRavenDbKey IS NOT NULL;";
+                command.CommandText =
+                    "SELECT Count(*) FROM Users WHERE EmailAddress = @EmailAddress AND GateballScoresRavenDbKey IS NOT NULL;";
                 command.Parameters.AddWithValue("@EmailAddress", emailAddress);
 
                 var count = command.ExecuteScalar();
