@@ -7,7 +7,6 @@ namespace CroquetScores.RavenDB.Documents
 
     public class TeamMatch : Competition
     {
-
         public string TeamA { get; set; }
 
         public string TeamB { get; set; }

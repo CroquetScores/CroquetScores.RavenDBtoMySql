@@ -2,7 +2,6 @@
 {
     public class TournamentPlayer
     {
-
         public int _Id { get; set; }
 
         public string Name { get; set; }

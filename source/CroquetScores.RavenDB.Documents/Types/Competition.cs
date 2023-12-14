@@ -17,7 +17,7 @@
         public string Slug { get; set; }
 
         public class Reference : RavenDocumentReference
-        {   
+        {
             public string Name { get; set; }
 
             public string Slug { get; set; }

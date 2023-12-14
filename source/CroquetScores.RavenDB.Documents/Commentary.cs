@@ -5,7 +5,6 @@ namespace CroquetScores.RavenDB.Documents
 {
     public class Commentary : RavenDocument
     {
-
         public Tournament.Reference Tournament { get; set; }
 
         public User.Reference Commentator { get; set; }

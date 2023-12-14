@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Security.Policy;
 using CroquetScores.RavenDB.Documents;
 using CroquetScores.RavenDB.Documents.Types;
 using MySql.Data.MySqlClient;
@@ -36,7 +35,8 @@ namespace CroquetScores.RavenDBtoMySql.Importers
                 if (site == "croquetscores.com")
                 {
                     var missingUser = CreateMissingUser();
-                    MissingUserKey = ImportUser(insertCommand, "croquetscores.com", missingUser, missingUser.EmailAddress);
+                    MissingUserKey = ImportUser(insertCommand, "croquetscores.com", missingUser,
+                        missingUser.EmailAddress);
                 }
 
                 while (moreToRead)
@@ -96,8 +96,9 @@ namespace CroquetScores.RavenDBtoMySql.Importers
 
         public static Guid Import(MySqlConnection connection, string site, User.Reference tournamentManager)
         {
-            var emailAddress = GetUniqueEmailAddress(connection, $"missing-user-record-{tournamentManager.Name}@example.com");
-            var user = new User()
+            var emailAddress =
+                GetUniqueEmailAddress(connection, $"missing-user-record-{tournamentManager.Name}@example.com");
+            var user = new User
             {
                 EmailAddress = emailAddress,
                 Authentication = new Authentication(),

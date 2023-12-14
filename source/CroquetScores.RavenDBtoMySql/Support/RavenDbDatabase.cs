@@ -28,7 +28,9 @@ namespace CroquetScores.RavenDBtoMySql.Support
             var ravenDbConnectionString = ConfigurationManager.AppSettings[$"RavenDb:{site}"];
 
             if (string.IsNullOrWhiteSpace(ravenDbConnectionString))
+            {
                 throw new Exception($"RavenDb:{site} has not been set in AppSettings.config.");
+            }
 
             ravenDbConnectionString = ConvertConnectionStringToQueryString(ravenDbConnectionString);
 

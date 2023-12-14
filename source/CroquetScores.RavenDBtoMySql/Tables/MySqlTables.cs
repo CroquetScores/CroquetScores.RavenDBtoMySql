@@ -11,6 +11,5 @@ namespace CroquetScores.RavenDBtoMySql.Tables
             TournamentManagersTable.CreateTable(connection);
             TournamentScorersTable.CreateTable(connection);
         }
-
     }
 }
