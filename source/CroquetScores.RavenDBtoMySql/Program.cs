@@ -10,17 +10,18 @@ namespace CroquetScores.RavenDBtoMySql
         {
             try
             {
-                Console.WriteLine("Creating the database...");
+                Log.Start();
+                Log.Progress("Creating the database...");
                 MySqlDatabase.CreateDatabase();
 
-                Console.WriteLine("Opening the database...");
+                Log.Progress("Opening the database...");
                 using (var connection = MySqlDatabase.OpenDatabase())
                 {
                     var sites = new[] { "croquetscores.com", "gateballscores.com" };
 
                     foreach (var site in sites)
                     {
-                        Console.WriteLine($"Opening document store for {site}...");
+                        Log.Progress($"Opening document store for {site}...");
                         using (var documentStore = RavenDbDatabase.InitializeDocumentStore(site))
                         {
                             {
@@ -31,7 +32,10 @@ namespace CroquetScores.RavenDBtoMySql
                     }
                 }
 
-                Console.WriteLine("Success!");
+                Log.Progress("Success!");
+                Log.Finish();
+                Console.WriteLine();
+                Console.WriteLine($"Info logged to '{Log.FileName}'.");
             }
             catch (Exception exception)
             {

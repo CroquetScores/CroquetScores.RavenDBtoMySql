@@ -2,6 +2,7 @@
 using System.Linq;
 using CroquetScores.RavenDB.Documents;
 using CroquetScores.RavenDB.Documents.Types;
+using CroquetScores.RavenDBtoMySql.Support;
 using MySql.Data.MySqlClient;
 using Raven.Client;
 
@@ -16,7 +17,7 @@ namespace CroquetScores.RavenDBtoMySql.Importers
 
         public static void Import(IDocumentStore documentStore, MySqlConnection connection, string site)
         {
-            Console.WriteLine("Importing users data...");
+            Log.Progress("Importing users data...");
 
             int totalCount;
             var skip = 0;
@@ -28,7 +29,7 @@ namespace CroquetScores.RavenDBtoMySql.Importers
                 totalCount = session.Query<User>().Count(u => u.ConfirmedAt != null);
             }
 
-            Console.WriteLine($"{totalCount:N0} {site} users to import...");
+            Log.Statistic($"{totalCount:N0} {site} users to import...");
 
             using (var insertCommand = CreateInsertCommand(connection))
             {
@@ -84,14 +85,14 @@ namespace CroquetScores.RavenDBtoMySql.Importers
                         skip += users.Length;
                         moreToRead = users.Length > 0;
 
-                        Console.WriteLine($"Imported {skip:N0} {site} users of {totalCount:N0}...");
+                        Log.Progress($"Imported {skip:N0} {site} users of {totalCount:N0}...");
                     }
                 }
             }
 
-            Console.WriteLine($"Max email address length: {_maxEmailAddressLength}");
-            Console.WriteLine($"Max name length: {_maxNameLength}");
-            Console.WriteLine($"Max slug length: {_maxSlugLength}");
+            Log.Statistic($"Max email address length: {_maxEmailAddressLength}");
+            Log.Statistic($"Max name length: {_maxNameLength}");
+            Log.Statistic($"Max slug length: {_maxSlugLength}");
         }
 
         public static Guid Import(MySqlConnection connection, string site, User.Reference tournamentManager)
@@ -124,7 +125,7 @@ namespace CroquetScores.RavenDBtoMySql.Importers
             {
                 Name = "Missing on transfer from RavenDB to MySQL",
                 Slug = "missing-on-transfer-from-ravendb-to-mysql",
-                EmailAddress = "missing@missing.com",
+                EmailAddress = "missing@example.com",
                 ConfirmKey = Guid.NewGuid(),
                 Authentication = new Authentication(),
                 Id = "users/0",
@@ -230,7 +231,7 @@ namespace CroquetScores.RavenDBtoMySql.Importers
 
                 if (!EmailAddressExists(connection, tryNotDuplicatedEmailAddress))
                 {
-                    Console.WriteLine($"Using email address {tryNotDuplicatedEmailAddress}.");
+                    Log.Warning($"Using email address {tryNotDuplicatedEmailAddress}.");
                     return tryNotDuplicatedEmailAddress;
                 }
 

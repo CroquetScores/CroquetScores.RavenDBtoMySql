@@ -1,4 +1,5 @@
 ﻿using System;
+using CroquetScores.RavenDBtoMySql.Support;
 using MySql.Data.MySqlClient;
 
 namespace CroquetScores.RavenDBtoMySql.Tables
@@ -7,7 +8,7 @@ namespace CroquetScores.RavenDBtoMySql.Tables
     {
         public static void CreateTable(MySqlConnection connection)
         {
-            Console.WriteLine("Creating TournamentManagers table...");
+            Log.Progress("Creating TournamentManagers table...");
             using (var command = connection.CreateCommand())
             {
                 command.CommandText = "CREATE TABLE TournamentManagers (" +

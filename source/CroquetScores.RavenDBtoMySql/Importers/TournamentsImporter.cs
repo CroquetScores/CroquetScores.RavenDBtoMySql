@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using CroquetScores.RavenDB.Documents;
+using CroquetScores.RavenDBtoMySql.Support;
 using CroquetScores.RavenDBtoMySql.Tables;
 using MySql.Data.MySqlClient;
 using Raven.Client;
@@ -14,7 +15,7 @@ namespace CroquetScores.RavenDBtoMySql.Importers
 
         public static void Import(IDocumentStore documentStore, MySqlConnection connection, string site)
         {
-            Console.WriteLine("Importing Tournaments data...");
+            Log.Progress("Importing Tournaments data...");
 
             int totalCount;
             var skip = 0;
@@ -26,7 +27,7 @@ namespace CroquetScores.RavenDBtoMySql.Importers
                 totalCount = session.Query<Tournament>().Count();
             }
 
-            Console.WriteLine($"{totalCount:N0} {site} tournaments to import...");
+            Log.Statistic($"{totalCount:N0} {site} tournaments to import...");
 
             using (var command = CreateInsertCommand(connection))
             {
@@ -49,13 +50,13 @@ namespace CroquetScores.RavenDBtoMySql.Importers
                         skip += tournaments.Length;
                         moreToRead = tournaments.Length > 0;
 
-                        Console.WriteLine($"Imported {skip:N0} {site} tournaments of {totalCount:N0}...");
+                        Log.Progress($"Imported {skip:N0} {site} tournaments of {totalCount:N0}...");
                     }
                 }
             }
 
-            Console.WriteLine($"Maximum tournament name length {_maxNameLength}.");
-            Console.WriteLine($"Maximum time zone id length {_maxTimeZoneIdLength}.");
+            Log.Statistic($"Maximum tournament name length {_maxNameLength}.");
+            Log.Statistic($"Maximum time zone id length {_maxTimeZoneIdLength}.");
         }
 
         private static MySqlCommand CreateInsertCommand(MySqlConnection connection)

@@ -1,5 +1,6 @@
 ﻿using System;
 using CroquetScores.RavenDBtoMySql.Importers;
+using CroquetScores.RavenDBtoMySql.Support;
 using MySql.Data.MySqlClient;
 
 namespace CroquetScores.RavenDBtoMySql.Tables
@@ -8,7 +9,7 @@ namespace CroquetScores.RavenDBtoMySql.Tables
     {
         public static void CreateTable(MySqlConnection connection)
         {
-            Console.WriteLine("Creating Users table...");
+            Log.Progress("Creating Users table...");
             using (var command = connection.CreateCommand())
             {
                 command.CommandText = "CREATE TABLE Users (" +
@@ -72,7 +73,7 @@ namespace CroquetScores.RavenDBtoMySql.Tables
                 return Guid.Parse(result.ToString());
             }
 
-            Console.WriteLine($"Missing user {site}/{ravenDbId}.");
+            Log.Warning($"Missing user {site}/{ravenDbId}.");
             return UsersImporter.MissingUserKey;
         }
 
