@@ -7,6 +7,9 @@ namespace CroquetScores.RavenDBtoMySql.Tables
         public static void Create(MySqlConnection connection)
         {
             UsersTable.CreateTable(connection);
+            TournamentsTable.CreateTable(connection);
+            TournamentManagersTable.CreateTable(connection);
+            TournamentScorersTable.CreateTable(connection);
         }
 
     }

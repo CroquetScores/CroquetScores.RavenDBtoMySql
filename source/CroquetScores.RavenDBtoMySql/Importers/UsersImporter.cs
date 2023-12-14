@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
+using System.Security.Policy;
 using CroquetScores.RavenDB.Documents;
+using CroquetScores.RavenDB.Documents.Types;
 using MySql.Data.MySqlClient;
 using Raven.Client;
 
@@ -11,6 +13,7 @@ namespace CroquetScores.RavenDBtoMySql.Importers
         private static int _maxNameLength;
         private static int _maxEmailAddressLength;
         private static int _maxSlugLength;
+        internal static Guid MissingUserKey;
 
         public static void Import(IDocumentStore documentStore, MySqlConnection connection, string site)
         {
@@ -18,7 +21,7 @@ namespace CroquetScores.RavenDBtoMySql.Importers
 
             int totalCount;
             var skip = 0;
-            const int take = 1024;
+            const int take = 100;
             var moreToRead = true;
 
             using (var session = documentStore.OpenSession())
@@ -28,47 +31,61 @@ namespace CroquetScores.RavenDBtoMySql.Importers
 
             Console.WriteLine($"{totalCount:N0} {site} users to import...");
 
-            while (moreToRead)
+            using (var insertCommand = CreateInsertCommand(connection))
             {
-                using (var session = documentStore.OpenSession())
+                if (site == "croquetscores.com")
                 {
-                    var users = session.Query<User>().Where(u => u.ConfirmedAt != null).Skip(skip).Take(take).ToArray();
+                    var missingUser = CreateMissingUser();
+                    MissingUserKey = ImportUser(insertCommand, "croquetscores.com", missingUser, missingUser.EmailAddress);
+                }
 
-                    foreach (var user in users)
+                while (moreToRead)
+                {
+                    using (var session = documentStore.OpenSession())
                     {
-                        if (site == "croquetscores.com")
-                        {
-                            var emailAddress = GetUniqueEmailAddress(connection, user.EmailAddress);
+                        var users = session
+                            .Query<User>()
+                            .Where(u => u.ConfirmedAt != null)
+                            .Skip(skip)
+                            .Take(take)
+                            .ToArray();
 
-                            ValidateStringFieldLengths(site, user, emailAddress);
-                            ImportUser(connection, site, user, emailAddress);
-                        }
-                        else
+                        foreach (var user in users)
                         {
-                            var emailAddress = user.EmailAddress;
-
-                            if (EmailAddressExists(connection, emailAddress))
+                            if (site == "croquetscores.com")
                             {
-                                if (EmailAddressAndGateballRavenDbKeyExists(connection, emailAddress))
-                                {
-                                    emailAddress = GetUniqueEmailAddress(connection, user.EmailAddress);
-                                }
-                                else
-                                {
-                                    UpdateGateballRavenDbKey(connection, emailAddress, user.Id);
-                                    continue;
-                                }
+                                var emailAddress = GetUniqueEmailAddress(connection, user.EmailAddress);
+
+                                ValidateStringFieldLengths(site, user, emailAddress);
+                                ImportUser(insertCommand, site, user, emailAddress);
                             }
+                            else
+                            {
+                                var emailAddress = user.EmailAddress;
 
-                            ValidateStringFieldLengths(site, user, emailAddress);
-                            ImportUser(connection, site, user, emailAddress);
+                                if (EmailAddressExists(connection, emailAddress))
+                                {
+                                    if (EmailAddressAndGateballRavenDbKeyExists(connection, emailAddress))
+                                    {
+                                        emailAddress = GetUniqueEmailAddress(connection, user.EmailAddress);
+                                    }
+                                    else
+                                    {
+                                        UpdateGateballRavenDbKey(connection, emailAddress, user.Id);
+                                        continue;
+                                    }
+                                }
+
+                                ValidateStringFieldLengths(site, user, emailAddress);
+                                ImportUser(insertCommand, site, user, emailAddress);
+                            }
                         }
+
+                        skip += users.Length;
+                        moreToRead = users.Length > 0;
+
+                        Console.WriteLine($"Imported {skip:N0} {site} users of {totalCount:N0}...");
                     }
-
-                    skip += users.Length;
-                    moreToRead = users.Length > 0;
-
-                    Console.WriteLine($"Imported {skip:N0} {site} users of {totalCount:N0}...");
                 }
             }
 
@@ -77,13 +94,108 @@ namespace CroquetScores.RavenDBtoMySql.Importers
             Console.WriteLine($"Max slug length: {_maxSlugLength}");
         }
 
+        public static Guid Import(MySqlConnection connection, string site, User.Reference tournamentManager)
+        {
+            var emailAddress = GetUniqueEmailAddress(connection, $"missing-user-record-{tournamentManager.Name}@example.com");
+            var user = new User()
+            {
+                EmailAddress = emailAddress,
+                Authentication = new Authentication(),
+                ConfirmKey = Guid.NewGuid(),
+                Id = tournamentManager.Id,
+                IsArchived = true,
+                Name = tournamentManager.Name,
+                Password = "fake",
+                Slug = tournamentManager.Name.ToLower().Replace(" ", "-")
+            };
+
+            ValidateStringFieldLengths(site, user, emailAddress);
+
+            using (var insertCommand = CreateInsertCommand(connection))
+            {
+                return ImportUser(insertCommand, site, user, emailAddress);
+            }
+        }
+
+        private static User CreateMissingUser()
+        {
+            return new User
+            {
+                Name = "Missing on transfer from RavenDB to MySQL",
+                Slug = "missing-on-transfer-from-ravendb-to-mysql",
+                EmailAddress = "missing@missing.com",
+                ConfirmKey = Guid.NewGuid(),
+                Authentication = new Authentication(),
+                Id = "users/0",
+                IsArchived = true,
+                Password = "missing"
+            };
+        }
+
+        private static MySqlCommand CreateInsertCommand(MySqlConnection connection)
+        {
+            var command = connection.CreateCommand();
+
+            command.CommandText =
+                "INSERT INTO Users (" +
+                "UserKey," +
+                "Name," +
+                "EmailAddress," +
+                "Slug," +
+                "Password," +
+                "ConfirmKey," +
+                "ConfirmedAt," +
+                "LastSignIn," +
+                "LastSignOut," +
+                "FailedSignInAttempts," +
+                "IsArchived," +
+                "CroquetScoresRavenDbKey," +
+                "GateballScoresRavenDbKey," +
+                "Created," +
+                "LastUpdate)" +
+                " VALUES (" +
+                "@UserKey," +
+                "@Name," +
+                "@EmailAddress," +
+                "@Slug," +
+                "@Password," +
+                "@ConfirmKey," +
+                "@ConfirmedAt," +
+                "@LastSignIn," +
+                "@LastSignOut," +
+                "@FailedSignInAttempts," +
+                "@IsArchived," +
+                "@CroquetScoresRavenDbKey," +
+                "@GateballScoresRavenDbKey," +
+                "@Created," +
+                "@LastUpdate)";
+
+            command.Parameters.AddWithValue("@UserKey", null);
+            command.Parameters.AddWithValue("@Name", null);
+            command.Parameters.AddWithValue("@EmailAddress", null);
+            command.Parameters.AddWithValue("@Slug", null);
+            command.Parameters.AddWithValue("@Password", null);
+            command.Parameters.AddWithValue("@ConfirmKey", null);
+            command.Parameters.AddWithValue("@ConfirmedAt", null);
+            command.Parameters.AddWithValue("@LastSignIn", null);
+            command.Parameters.AddWithValue("@LastSignOut", null);
+            command.Parameters.AddWithValue("@FailedSignInAttempts", null);
+            command.Parameters.AddWithValue("@IsArchived", null);
+            command.Parameters.AddWithValue("@Created", new DateTime(2024, 1, 1));
+            command.Parameters.AddWithValue("@LastUpdate", new DateTime(2024, 1, 1));
+            command.Parameters.AddWithValue("@CroquetScoresRavenDbKey", null);
+            command.Parameters.AddWithValue("@GateballScoresRavenDbKey", null);
+
+            return command;
+        }
+
         private static void UpdateGateballRavenDbKey(MySqlConnection connection, string emailAddress, string userId)
         {
             using (var command = connection.CreateCommand())
             {
                 command.CommandText =
                     "UPDATE Users SET GateballScoresRavenDbKey = @GateballScoresRavenDbKey WHERE EmailAddress = @EmailAddress;";
-                command.Parameters.AddWithValue("@GateballScoresRavenDbKey", $"gateballscores.com/{userId}");
+                command.Parameters.AddWithValue("@GateballScoresRavenDbKey", $"{userId}");
                 command.Parameters.AddWithValue("@EmailAddress", emailAddress);
                 command.ExecuteNonQuery();
             }
@@ -125,70 +237,36 @@ namespace CroquetScores.RavenDBtoMySql.Importers
             }
         }
 
-        private static void ImportUser(MySqlConnection connection, string site, User user, string emailAddress)
+        private static Guid ImportUser(MySqlCommand command, string site, User user, string emailAddress)
         {
-            using (var command = connection.CreateCommand())
+            var userKey = Guid.NewGuid();
+
+            command.Parameters["@UserKey"].Value = userKey;
+            command.Parameters["@Name"].Value = user.Name;
+            command.Parameters["@EmailAddress"].Value = emailAddress;
+            command.Parameters["@Slug"].Value = user.Slug;
+            command.Parameters["@Password"].Value = user.Password;
+            command.Parameters["@ConfirmKey"].Value = user.ConfirmKey;
+            command.Parameters["@ConfirmedAt"].Value = user.ConfirmedAt;
+            command.Parameters["@LastSignIn"].Value = user.Authentication.LastSignIn;
+            command.Parameters["@LastSignOut"].Value = user.Authentication.LastSignOut;
+            command.Parameters["@FailedSignInAttempts"].Value = user.Authentication.FailedSignInAttempts;
+            command.Parameters["@IsArchived"].Value = user.IsArchived;
+
+            if (site == "croquetscores.com")
             {
-                command.CommandText = "INSERT INTO Users (" +
-                                      "UserKey," +
-                                      "Name," +
-                                      "EmailAddress," +
-                                      "Slug," +
-                                      "Password," +
-                                      "ConfirmKey," +
-                                      "ConfirmedAt," +
-                                      "LastSignIn," +
-                                      "LastSignOut," +
-                                      "FailedSignInAttempts," +
-                                      "IsArchived," +
-                                      "CroquetScoresRavenDbKey," +
-                                      "GateballScoresRavenDbKey," +
-                                      "Created," +
-                                      "LastUpdate)" +
-                                      " VALUES (" +
-                                      "@UserKey," +
-                                      "@Name," +
-                                      "@EmailAddress," +
-                                      "@Slug," +
-                                      "@Password," +
-                                      "@ConfirmKey," +
-                                      "@ConfirmedAt," +
-                                      "@LastSignIn," +
-                                      "@LastSignOut," +
-                                      "@FailedSignInAttempts," +
-                                      "@IsArchived," +
-                                      "@CroquetScoresRavenDbKey," +
-                                      "@GateballScoresRavenDbKey," +
-                                      "@Created," +
-                                      "@LastUpdate)";
-
-                command.Parameters.AddWithValue("@UserKey", Guid.NewGuid());
-                command.Parameters.AddWithValue("@Name", user.Name);
-                command.Parameters.AddWithValue("@EmailAddress", emailAddress);
-                command.Parameters.AddWithValue("@Slug", user.Slug);
-                command.Parameters.AddWithValue("@Password", user.Password);
-                command.Parameters.AddWithValue("@ConfirmKey", user.ConfirmKey);
-                command.Parameters.AddWithValue("@ConfirmedAt", user.ConfirmedAt);
-                command.Parameters.AddWithValue("@LastSignIn", user.Authentication.LastSignIn);
-                command.Parameters.AddWithValue("@LastSignOut", user.Authentication.LastSignOut);
-                command.Parameters.AddWithValue("@FailedSignInAttempts", user.Authentication.FailedSignInAttempts);
-                command.Parameters.AddWithValue("@IsArchived", user.IsArchived);
-                command.Parameters.AddWithValue("@Created", new DateTime(2024, 1, 1));
-                command.Parameters.AddWithValue("@LastUpdate", new DateTime(2024, 1, 1));
-
-                if (site == "croquetscores.com")
-                {
-                    command.Parameters.AddWithValue("@CroquetScoresRavenDbKey", $"{site}/{user.Id}");
-                    command.Parameters.AddWithValue("@GateballScoresRavenDbKey", null);
-                }
-                else
-                {
-                    command.Parameters.AddWithValue("@CroquetScoresRavenDbKey", null);
-                    command.Parameters.AddWithValue("@GateballScoresRavenDbKey", $"{site}/{user.Id}");
-                }
-
-                command.ExecuteNonQuery();
+                command.Parameters["@CroquetScoresRavenDbKey"].Value = user.Id;
+                command.Parameters["@GateballScoresRavenDbKey"].Value = null;
             }
+            else
+            {
+                command.Parameters["@CroquetScoresRavenDbKey"].Value = null;
+                command.Parameters["@GateballScoresRavenDbKey"].Value = user.Id;
+            }
+
+            command.ExecuteNonQuery();
+
+            return userKey;
         }
 
         private static bool EmailAddressExists(MySqlConnection connection, string userEmailAddress)
@@ -210,19 +288,19 @@ namespace CroquetScores.RavenDBtoMySql.Importers
             _maxEmailAddressLength = Math.Max(_maxEmailAddressLength, emailAddress.Length);
             _maxSlugLength = Math.Max(_maxSlugLength, user.Slug.Length);
 
-            if (_maxNameLength > 1000)
+            if (_maxNameLength > 200)
             {
                 throw new Exception(
                     $"{site}/{user.Id} name at {user.Name.Length:N0} characters is too long. {user.Name}");
             }
 
-            if (_maxEmailAddressLength > 500)
+            if (_maxEmailAddressLength > 200)
             {
                 throw new Exception(
                     $"{site}/{user.Id} email address at {emailAddress.Length:N0} characters is too long. {emailAddress}");
             }
 
-            if (_maxSlugLength > 1000)
+            if (_maxSlugLength > 200)
             {
                 throw new Exception(
                     $"{site}/{user.Id} slug at {user.Slug.Length:N0} characters is too long. {user.Slug}");

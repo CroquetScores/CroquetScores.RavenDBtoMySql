@@ -100,12 +100,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Importers\TournamentManagersImporter.cs" />
+    <Compile Include="Importers\TournamentScorersImporter.cs" />
+    <Compile Include="Importers\TournamentsImporter.cs" />
     <Compile Include="Support\MySqlDatabase.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tables\MySqlTables.cs" />
     <Compile Include="Support\RavenDbDatabase.cs" />
     <Compile Include="Importers\UsersImporter.cs" />
+    <Compile Include="Tables\TournamentScorersTable.cs" />
+    <Compile Include="Tables\TournamentsTable.cs" />
+    <Compile Include="Tables\TournamentManagersTable.cs" />
     <Compile Include="Tables\UsersTable.cs" />
   </ItemGroup>
   <ItemGroup>

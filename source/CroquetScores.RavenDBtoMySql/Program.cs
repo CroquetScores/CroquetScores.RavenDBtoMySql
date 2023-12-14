@@ -25,6 +25,7 @@ namespace CroquetScores.RavenDBtoMySql
                         {
                             {
                                 UsersImporter.Import(documentStore, connection, site);
+                                TournamentsImporter.Import(documentStore, connection, site);
                             }
                         }
                     }
