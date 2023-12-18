@@ -1,4 +1,6 @@
-﻿using System;
+﻿// ReSharper disable UnusedMember.Global
+
+using System;
 
 namespace CroquetScores.RavenDB.Documents.Types
 {

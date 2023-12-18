@@ -157,11 +157,6 @@ namespace CroquetScores.RavenDBtoMySql.Importers
             Log.Error($"TournamentPlayer.{propertyName} '{tournamentPropertyValue}' != CompetitionPlayer.{propertyName} '{competitionPropertyValue}'. tournamentKey = {tournamentKey} competitionKey {competitionKey}");
         }
 
-        private static IEnumerable<CompetitionPlayer> CompetitionPlayersNotAlreadyInTournamentPlayers(List<CompetitionPlayer> competitionPlayers, List<TournamentPlayer> tournamentPlayers)
-        {
-            return competitionPlayers.Where(c => tournamentPlayers.Count(t => t.RavenDbKey == c._Id) == 0);
-        }
-
         private static void InsertCompetition(MySqlConnection connection, Guid tournamentKey, Guid competitionKey, Competition competition, string type, string typeProperties)
         {
             ValidateColumnLengths(competition);
@@ -248,7 +243,7 @@ namespace CroquetScores.RavenDBtoMySql.Importers
             }
         }
 
-        private static Guid GetTournamentPlayerKey(int tournamentPlayerId, List<TournamentPlayer> tournamentPlayerImporters)
+        private static Guid GetTournamentPlayerKey(int tournamentPlayerId, IEnumerable<TournamentPlayer> tournamentPlayerImporters)
         {
             return tournamentPlayerImporters.Single(x => x.RavenDbKey == tournamentPlayerId).TournamentPlayerKey;
         }

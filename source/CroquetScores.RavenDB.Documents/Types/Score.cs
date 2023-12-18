@@ -1,4 +1,6 @@
-﻿using System;
+﻿// ReSharper disable UnusedMember.Global
+
+using System;
 using System.Linq;
 using Newtonsoft.Json;
 using OpenMagic.Extensions;
@@ -40,7 +42,7 @@ namespace CroquetScores.RavenDB.Documents.Types
 
             if (!score[0].IsInteger())
             {
-                throw new FormatException(string.Format("'{0}' is not a valid score. The first character must be a number.", score));
+                throw new FormatException($"'{score}' is not a valid score. The first character must be a number.");
             }
 
             _Score = score;
@@ -64,19 +66,14 @@ namespace CroquetScores.RavenDB.Documents.Types
             {
                 var hoopCount = Hoops.ToString();
 
-                if (_Score.Length == hoopCount.Length)
-                {
-                    return null;
-                }
-
-                return _Score.Substring(hoopCount.Length).Trim();
+                return _Score.Length == hoopCount.Length ? null : _Score.Substring(hoopCount.Length).Trim();
             }
         }
 
         public string Result(Score opponent)
         {
             var difference = Hoops - opponent.Hoops;
-            var value = string.Format("{0}{1}{2}", difference, Peeling, opponent.Peeling);
+            var value = $"{difference}{Peeling}{opponent.Peeling}";
 
             if (difference > 0)
             {

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data;
-using CroquetScores.RavenDB.Documents.Types;
 using CroquetScores.RavenDBtoMySql.Support;
 
 namespace CroquetScores.RavenDBtoMySql.TableRows
@@ -19,16 +18,16 @@ namespace CroquetScores.RavenDBtoMySql.TableRows
             RavenDbKey = reader.GetInt32(7);
         }
 
-        public TournamentPlayer(Guid tournamentPlayerKey, Guid tournamentKey, CompetitionPlayer competitionPlayer)
+        public TournamentPlayer(Guid tournamentPlayerKey, Guid tournamentKey, RavenDB.Documents.Types.TournamentPlayer ravenTournamentPlayer)
         {
             TournamentPlayerKey = tournamentPlayerKey;
             TournamentKey = tournamentKey;
-            Name = competitionPlayer.Name;
-            Representing = competitionPlayer.Representing;
-            Slug = competitionPlayer.Slug;
+            Name = ravenTournamentPlayer.Name;
+            Representing = ravenTournamentPlayer.Representing;
+            Slug = ravenTournamentPlayer.Slug;
             Created = new DateTime(2024, 1, 1);
             LastUpdated = new DateTime(2024, 1, 1);
-            RavenDbKey = competitionPlayer._Id;
+            RavenDbKey = ravenTournamentPlayer._Id;
         }
 
         public Guid TournamentPlayerKey { get; private set; }

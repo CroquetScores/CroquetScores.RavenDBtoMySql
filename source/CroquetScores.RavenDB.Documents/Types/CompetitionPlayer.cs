@@ -1,4 +1,6 @@
-﻿namespace CroquetScores.RavenDB.Documents.Types
+﻿// ReSharper disable UnusedMember.Global
+
+namespace CroquetScores.RavenDB.Documents.Types
 {
     // todo: why inherit from player? why not use player.Reference?
     public class CompetitionPlayer : TournamentPlayer

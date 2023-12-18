@@ -1,9 +1,10 @@
 ﻿using System;
 using CroquetScores.RavenDB.Documents.Types;
 
+// ReSharper disable UnusedMember.Global
+
 namespace CroquetScores.RavenDB.Documents
 {
-    // ReSharper disable once UnusedMember.Global
     public class Commentary : RavenDocument
     {
         public Tournament.Reference Tournament { get; set; }

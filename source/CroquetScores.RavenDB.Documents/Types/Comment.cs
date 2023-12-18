@@ -1,5 +1,7 @@
 ﻿using System;
 
+// ReSharper disable UnusedMember.Global
+
 namespace CroquetScores.RavenDB.Documents.Types
 {
     public class Comment

@@ -1,4 +1,6 @@
-﻿namespace CroquetScores.RavenDB.Documents.Types
+﻿// ReSharper disable UnusedMember.Global
+
+namespace CroquetScores.RavenDB.Documents.Types
 {
     public abstract class Competition : RavenDocument
     {
