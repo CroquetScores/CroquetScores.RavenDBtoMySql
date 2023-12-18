@@ -45,6 +45,11 @@ namespace CroquetScores.RavenDBtoMySql.Support
         public static void Start()
         {
             _started = DateTime.Now;
+            if (File.Exists(FileName))
+            {
+                File.Delete(FileName);
+            }
+
             WriteToFile($"Started: {_started:s}");
         }
 
