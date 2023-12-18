@@ -169,7 +169,7 @@ namespace CroquetScores.RavenDBtoMySql.Importers
                 command.CommandText = "INSERT INTO Competitions (" +
                                       "CompetitionKey," +
                                       "TournamentKey," +
-                                      "Order," +
+                                      "OrderBy," +
                                       "Name," +
                                       "Slug," +
                                       "Type," +
@@ -192,7 +192,7 @@ namespace CroquetScores.RavenDBtoMySql.Importers
 
                 command.Parameters.AddWithValue("@CompetitionKey", competitionKey);
                 command.Parameters.AddWithValue("@TournamentKey", tournamentKey);
-                command.Parameters.AddWithValue("@Order", order);
+                command.Parameters.AddWithValue("@OrderBy", order);
                 command.Parameters.AddWithValue("@Name", competition.Name);
                 command.Parameters.AddWithValue("@Slug", competition.Slug);
                 command.Parameters.AddWithValue("@Type", type);
@@ -238,7 +238,7 @@ namespace CroquetScores.RavenDBtoMySql.Importers
 
                     command.Parameters["@GameKey"].Value = Guid.NewGuid();
                     command.Parameters["@CompetitionKey"].Value = competitionKey;
-                    command.Parameters["@Order"].Value = order;
+                    command.Parameters["@OrderBy"].Value = order;
                     command.Parameters["@WinnerPlayerKey"].Value = GetTournamentPlayerKey(game.Winner.PlayerId, tournamentPlayerImporters);
                     command.Parameters["@WinnerScore"].Value = game.Winner.Score;
                     command.Parameters["@LoserPlayerKey"].Value = GetTournamentPlayerKey(game.Loser.PlayerId, tournamentPlayerImporters);
@@ -265,6 +265,7 @@ namespace CroquetScores.RavenDBtoMySql.Importers
             command.CommandText = "INSERT INTO Games (" +
                                   "GameKey," +
                                   "CompetitionKey," +
+                                  "OrderBy," +
                                   "WinnerPlayerKey," +
                                   "WinnerScore," +
                                   "LoserPlayerKey," +
@@ -283,7 +284,7 @@ namespace CroquetScores.RavenDBtoMySql.Importers
 
             command.Parameters.AddWithValue("@GameKey", null);
             command.Parameters.AddWithValue("@CompetitionKey", null);
-            command.Parameters.AddWithValue("@Order", null);
+            command.Parameters.AddWithValue("@OrderBy", null);
             command.Parameters.AddWithValue("@WinnerPlayerKey", null);
             command.Parameters.AddWithValue("@WinnerScore", null);
             command.Parameters.AddWithValue("@LoserPlayerKey", null);
