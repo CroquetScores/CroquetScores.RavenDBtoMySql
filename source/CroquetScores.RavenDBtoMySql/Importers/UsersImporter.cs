@@ -290,19 +290,19 @@ namespace CroquetScores.RavenDBtoMySql.Importers
             _maxEmailAddressLength = Math.Max(_maxEmailAddressLength, emailAddress.Length);
             _maxSlugLength = Math.Max(_maxSlugLength, user.Slug.Length);
 
-            if (_maxNameLength > 200)
+            if (user.Name.Length > 200)
             {
                 Log.Error($"{site}/{user.Id} name at {user.Name.Length:N0} characters is too long. {user.Name}");
                 user.Name = user.Name.Substring(0, 200);
             }
 
-            if (_maxEmailAddressLength > 200)
+            if (user.EmailAddress.Length > 200)
             {
                 Log.Error($"{site}/{user.Id} email address at {emailAddress.Length:N0} characters is too long. {emailAddress}");
                 user.EmailAddress = user.EmailAddress.Substring(0, 200);
             }
 
-            if (_maxSlugLength <= 200)
+            if (user.Slug.Length <= 200)
             {
                 return;
             }

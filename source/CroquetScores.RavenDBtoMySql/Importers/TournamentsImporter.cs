@@ -125,13 +125,13 @@ namespace CroquetScores.RavenDBtoMySql.Importers
             _maxNameLength = Math.Max(_maxNameLength, tournament.Name.Length);
             _maxTimeZoneIdLength = Math.Max(_maxTimeZoneIdLength, tournament.TimeZoneId.Length);
 
-            if (_maxNameLength > 600)
+            if (tournament.Name.Length > 600)
             {
                 Log.Error($"Tournament {tournament.Id} name is too long. {tournament.Name}");
                 tournament.Name = tournament.Name.Substring(0, 600);
             }
 
-            if (_maxTimeZoneIdLength > 50)
+            if (tournament.TimeZoneId.Length > 50)
             {
                 Log.Error($"Tournament {tournament.Id} TimeZoneId is too long. {tournament.TimeZoneId}");
                 tournament.TimeZoneId = tournament.TimeZoneId.Substring(0, 50);
