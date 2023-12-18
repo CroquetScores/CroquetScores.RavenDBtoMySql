@@ -26,7 +26,7 @@ namespace CroquetScores.RavenDBtoMySql.Importers
         {
             if (swiss.CarryForwardCompetitions == null)
             {
-                return new Guid[] {};
+                return new Guid[] { };
             }
 
             var carryForwardCompetitions = new List<Guid>();
@@ -49,6 +49,7 @@ namespace CroquetScores.RavenDBtoMySql.Importers
                         Log.Warning($"Could not find Carry Forward Competition '{carryForwardCompetition.Id}");
                         continue;
                     }
+
                     carryForwardCompetitions.Add(Guid.Parse(competitionKey.ToString()));
                 }
             }
