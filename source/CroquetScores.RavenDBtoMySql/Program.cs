@@ -6,6 +6,8 @@ namespace CroquetScores.RavenDBtoMySql
 {
     internal class Program
     {
+        public const bool ReadAll = true;
+
         private static void Main()
         {
             try

@@ -3,8 +3,7 @@ using CroquetScores.RavenDB.Documents.Types;
 
 namespace CroquetScores.RavenDB.Documents
 {
-    // todo: fully document.
-
+    // ReSharper disable once UnusedMember.Global
     public class TeamMatch : Competition
     {
         public string TeamA { get; set; }

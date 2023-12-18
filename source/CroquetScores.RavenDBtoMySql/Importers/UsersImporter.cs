@@ -83,7 +83,7 @@ namespace CroquetScores.RavenDBtoMySql.Importers
                         }
 
                         skip += users.Length;
-                        moreToRead = users.Length > 0;
+                        moreToRead = users.Length > 0 && Program.ReadAll;
 
                         Log.Progress($"Imported {skip:N0} {site} users of {totalCount:N0}...");
                     }
@@ -292,21 +292,23 @@ namespace CroquetScores.RavenDBtoMySql.Importers
 
             if (_maxNameLength > 200)
             {
-                throw new Exception(
-                    $"{site}/{user.Id} name at {user.Name.Length:N0} characters is too long. {user.Name}");
+                Log.Error($"{site}/{user.Id} name at {user.Name.Length:N0} characters is too long. {user.Name}");
+                user.Name = user.Name.Substring(0, 200);
             }
 
             if (_maxEmailAddressLength > 200)
             {
-                throw new Exception(
-                    $"{site}/{user.Id} email address at {emailAddress.Length:N0} characters is too long. {emailAddress}");
+                Log.Error($"{site}/{user.Id} email address at {emailAddress.Length:N0} characters is too long. {emailAddress}");
+                user.EmailAddress = user.EmailAddress.Substring(0, 200);
             }
 
-            if (_maxSlugLength > 200)
+            if (_maxSlugLength <= 200)
             {
-                throw new Exception(
-                    $"{site}/{user.Id} slug at {user.Slug.Length:N0} characters is too long. {user.Slug}");
+                return;
             }
+
+            Log.Error($"{site}/{user.Id} slug at {user.Slug.Length:N0} characters is too long. {user.Slug}");
+            user.Slug = user.Slug.Substring(0, 200);
         }
     }
 }

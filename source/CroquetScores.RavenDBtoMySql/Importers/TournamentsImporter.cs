@@ -24,7 +24,7 @@ namespace CroquetScores.RavenDBtoMySql.Importers
 
             using (var session = documentStore.OpenSession())
             {
-                totalCount = session.Query<Tournament>().Count();
+                totalCount = session.Query<Tournament>().Count(x => !x.IsArchived);
             }
 
             Log.Statistic($"{totalCount:N0} {site} tournaments to import...");
@@ -35,7 +35,7 @@ namespace CroquetScores.RavenDBtoMySql.Importers
                 {
                     using (var session = documentStore.OpenSession())
                     {
-                        var tournaments = session.Query<Tournament>().Skip(skip).Take(take).ToArray();
+                        var tournaments = session.Query<Tournament>().Where(x => !x.IsArchived).Skip(skip).Take(take).ToArray();
 
                         foreach (var tournament in tournaments)
                         {
@@ -45,15 +45,20 @@ namespace CroquetScores.RavenDBtoMySql.Importers
                             ExecuteInsertCommand(command, tournamentKey, site, tournament, createdByUserKey);
                             TournamentManagersImporter.Import(tournamentKey, connection, site, tournament.Managers);
                             TournamentScorersImporter.Import(tournamentKey, connection, site, tournament.Scorers);
+                            TournamentPlayersImporter.Import(documentStore, connection, tournamentKey, tournament);
+                            CompetitionsImporter.Import(documentStore, connection, tournamentKey, tournament);
                         }
 
                         skip += tournaments.Length;
-                        moreToRead = tournaments.Length > 0;
+                        moreToRead = tournaments.Length > 0 && Program.ReadAll;
 
                         Log.Progress($"Imported {skip:N0} {site} tournaments of {totalCount:N0}...");
                     }
                 }
             }
+
+            TournamentPlayersImporter.LogStatistics();
+            CompetitionsImporter.LogStatistics();
 
             Log.Statistic($"Maximum tournament name length {_maxNameLength}.");
             Log.Statistic($"Maximum time zone id length {_maxTimeZoneIdLength}.");
@@ -113,20 +118,23 @@ namespace CroquetScores.RavenDBtoMySql.Importers
             return command;
         }
 
-        private static void ExecuteInsertCommand(MySqlCommand command, Guid tournamentKey, string site,
-            Tournament tournament, Guid createdByUserKey)
+        private static void ExecuteInsertCommand(MySqlCommand command, Guid tournamentKey, string site, Tournament tournament, Guid createdByUserKey)
         {
+            Log.Debug($"Tournament {tournament.Id}");
+
             _maxNameLength = Math.Max(_maxNameLength, tournament.Name.Length);
             _maxTimeZoneIdLength = Math.Max(_maxTimeZoneIdLength, tournament.TimeZoneId.Length);
 
             if (_maxNameLength > 600)
             {
-                throw new Exception($"Tournament {tournament.Id} name is too long. {tournament.Name}");
+                Log.Error($"Tournament {tournament.Id} name is too long. {tournament.Name}");
+                tournament.Name = tournament.Name.Substring(0, 600);
             }
 
             if (_maxTimeZoneIdLength > 50)
             {
-                throw new Exception($"Tournament {tournament.Id} TimeZoneId is too long. {tournament.TimeZoneId}");
+                Log.Error($"Tournament {tournament.Id} TimeZoneId is too long. {tournament.TimeZoneId}");
+                tournament.TimeZoneId = tournament.TimeZoneId.Substring(0, 50);
             }
 
             command.Parameters["@TournamentKey"].Value = tournamentKey;

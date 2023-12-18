@@ -2,6 +2,7 @@
 {
     public class TournamentPlayer
     {
+        // ReSharper disable once InconsistentNaming
         public int _Id { get; set; }
 
         public string Name { get; set; }

@@ -2,7 +2,7 @@
 
 namespace CroquetScores.RavenDB.Documents
 {
-    // todo: fully define.
+    // ReSharper disable once UnusedMember.Global
     public class Knockout : Competition
     {
         public int Size { get; set; }

@@ -13,7 +13,7 @@ namespace CroquetScores.RavenDBtoMySql.Support
 
         public static void Warning(string message)
         {
-            WriteToFile(message);
+            WriteToFile($"WARNING: {message}");
             WriteToConsole(message, ConsoleColor.DarkMagenta);
         }
 
@@ -38,14 +38,14 @@ namespace CroquetScores.RavenDBtoMySql.Support
 
         public static void Statistic(string message)
         {
-            WriteToFile(message);
+            WriteToFile($"STATISTIC: {message}");
             WriteToConsole(message);
         }
 
         public static void Start()
         {
             _started = DateTime.Now;
-            WriteToFile($@"Started: {_started:s}");
+            WriteToFile($"Started: {_started:s}");
         }
 
         public static void Finish()
@@ -57,6 +57,17 @@ namespace CroquetScores.RavenDBtoMySql.Support
         private static void WriteToFile(string message)
         {
             File.AppendAllText(FileName, message + Environment.NewLine);
+        }
+
+        public static void Debug(string message)
+        {
+            Console.WriteLine($"DEBUG: {message}");
+        }
+
+        public static void Error(string message)
+        {
+            WriteToFile($"ERROR: {message}");
+            WriteToConsole(message, ConsoleColor.Red);
         }
     }
 }

@@ -3,6 +3,7 @@ using CroquetScores.RavenDB.Documents.Types;
 
 namespace CroquetScores.RavenDB.Documents
 {
+    // ReSharper disable once UnusedMember.Global
     public class Commentary : RavenDocument
     {
         public Tournament.Reference Tournament { get; set; }

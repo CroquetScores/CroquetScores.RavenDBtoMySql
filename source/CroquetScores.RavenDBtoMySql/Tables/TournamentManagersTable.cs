@@ -1,5 +1,4 @@
-﻿using System;
-using CroquetScores.RavenDBtoMySql.Support;
+﻿using CroquetScores.RavenDBtoMySql.Support;
 using MySql.Data.MySqlClient;
 
 namespace CroquetScores.RavenDBtoMySql.Tables

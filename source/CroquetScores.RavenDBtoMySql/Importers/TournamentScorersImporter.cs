@@ -26,12 +26,7 @@ namespace CroquetScores.RavenDBtoMySql.Importers
                 // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
                 foreach (var tournamentScorer in tournamentScorers)
                 {
-                    var userKey = UsersTable.TryGetUserKey(connection, site, tournamentScorer.Id);
-
-                    if (userKey == null)
-                    {
-                        userKey = UsersImporter.Import(connection, site, tournamentScorer);
-                    }
+                    var userKey = UsersTable.TryGetUserKey(connection, site, tournamentScorer.Id) ?? UsersImporter.Import(connection, site, tournamentScorer);
 
                     command.Parameters["@TournamentScorerKey"].Value = Guid.NewGuid();
                     command.Parameters["@TournamentKey"].Value = tournamentKey;

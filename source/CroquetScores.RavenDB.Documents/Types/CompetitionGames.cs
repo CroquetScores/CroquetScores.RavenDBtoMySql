@@ -4,8 +4,11 @@ namespace CroquetScores.RavenDB.Documents.Types
 {
     public class CompetitionGames
     {
-        private List<Game> _Games { get; set; } = new List<Game>();
+        // ReSharper disable once InconsistentNaming
+        public List<Game> _Games { get; set; } = new List<Game>();
 
-        private int _LastId { get; set; }
+        // ReSharper disable once UnusedMember.Global
+        // ReSharper disable once InconsistentNaming
+        public int _LastId { get; set; }
     }
 }
