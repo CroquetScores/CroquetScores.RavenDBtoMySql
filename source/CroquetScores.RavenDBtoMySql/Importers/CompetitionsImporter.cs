@@ -17,15 +17,15 @@ namespace CroquetScores.RavenDBtoMySql.Importers
 
         public static void Import(IDocumentStore documentStore, MySqlConnection connection, Guid tournamentKey, Tournament tournament)
         {
-            var order = -100;
+            var order = 0;
 
             foreach (var tournamentCompetition in tournament.Competitions)
             {
+                order += 1000;
+
                 var id = tournamentCompetition.Id;
                 var competitionType = id.Substring(0, id.IndexOf("/", StringComparison.Ordinal));
                 var competitionKey = Guid.NewGuid();
-
-                order += 100;
 
                 switch (competitionType)
                 {
@@ -235,7 +235,7 @@ namespace CroquetScores.RavenDBtoMySql.Importers
             {
                 foreach (var game in games._Games)
                 {
-                    // Log.Debug($"Game {game.Id}");
+                    order += 1000;
 
                     command.Parameters["@GameKey"].Value = Guid.NewGuid();
                     command.Parameters["@CompetitionKey"].Value = competitionKey;
@@ -248,8 +248,6 @@ namespace CroquetScores.RavenDBtoMySql.Importers
                     command.Parameters["@LastUpdate"].Value = new DateTime(2024, 1, 1);
 
                     command.ExecuteNonQuery();
-
-                    order += 100;
                 }
             }
         }
