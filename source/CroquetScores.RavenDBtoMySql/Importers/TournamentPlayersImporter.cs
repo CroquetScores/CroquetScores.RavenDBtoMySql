@@ -18,14 +18,22 @@ namespace CroquetScores.RavenDBtoMySql.Importers
         {
             using (var session = documentStore.OpenSession())
             {
-                var tournamentPlayers = session
+                var multipleTournamentPlayers = session
                     .Query<TournamentPlayers>("TournamentsPlayers/ByIsArchivedAndTournamentId")
-                    .SingleOrDefault(x => x.Tournament.Id == tournament.Id);
+                    .Where(x => x.Tournament.Id == tournament.Id)
+                    .ToArray();
 
-                if (tournamentPlayers == null)
+                if (multipleTournamentPlayers.Length == 0)
                 {
                     return;
                 }
+
+                if (multipleTournamentPlayers.Length > 1)
+                {
+                    Log.Error($"There are {multipleTournamentPlayers.Length} TournamentPlayers for {tournament.Id}.");
+                }
+
+                var tournamentPlayers = multipleTournamentPlayers[0];
 
                 using (var command = CreateInsertCommand(connection, tournamentKey))
                 {
@@ -105,25 +113,25 @@ namespace CroquetScores.RavenDBtoMySql.Importers
             _maxRepresentingLength = Math.Max(_maxRepresentingLength, tournamentPlayer.Representing.GetLength());
             _maxSlugLength = Math.Max(_maxSlugLength, tournamentPlayer.Slug.Length);
 
-            if (_maxNameLength > 100)
+            if (tournamentPlayer.Name.Length > 500)
             {
                 Log.Error($"Tournament Player {tournamentPlayer._Id}/{tournamentPlayer.Name}/{tournamentPlayer.Representing} name is too long.");
-                tournamentPlayer.Name = tournamentPlayer.Name.Substring(0, 100);
+                tournamentPlayer.Name = tournamentPlayer.Name.Substring(0, 500);
             }
 
-            if (_maxRepresentingLength > 100)
+            if (tournamentPlayer.Representing.GetLength() > 100)
             {
                 Log.Error($"Tournament Player {tournamentPlayer._Id}/{tournamentPlayer.Name}/{tournamentPlayer.Representing} representing is too long.");
                 tournamentPlayer.Representing = tournamentPlayer.Representing.Substring(0, 100);
             }
 
-            if (_maxSlugLength <= 100)
+            if (tournamentPlayer.Slug.Length <= 500)
             {
                 return;
             }
 
             Log.Error($"Tournament Player {tournamentPlayer._Id}/{tournamentPlayer.Name}/{tournamentPlayer.Representing} slug is too long.");
-            tournamentPlayer.Slug = tournamentPlayer.Slug.Substring(0, 100);
+            tournamentPlayer.Slug = tournamentPlayer.Slug.Substring(0, 500);
         }
 
         public static void LogStatistics()
