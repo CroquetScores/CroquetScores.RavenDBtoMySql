@@ -181,6 +181,7 @@ namespace CroquetScores.RavenDBtoMySql.Importers
                                       "VALUES (" +
                                       "@CompetitionKey," +
                                       "@TournamentKey," +
+                                      "@OrderBy," +
                                       "@Name," +
                                       "@Slug," +
                                       "@Type," +
@@ -275,6 +276,7 @@ namespace CroquetScores.RavenDBtoMySql.Importers
                                   "VALUES (" +
                                   "@GameKey," +
                                   "@CompetitionKey," +
+                                  "@OrderBy," +
                                   "@WinnerPlayerKey," +
                                   "@WinnerScore," +
                                   "@LoserPlayerKey," +
