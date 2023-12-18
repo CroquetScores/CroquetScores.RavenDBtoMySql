@@ -11,14 +11,14 @@ namespace CroquetScores.RavenDBtoMySql.Importers
 {
     internal class CompetitionSwissImporter
     {
-        public static void Import(IDocumentStore documentStore, MySqlConnection connection, Guid tournamentKey, Guid competitionKey, string id)
+        public static void Import(IDocumentStore documentStore, MySqlConnection connection, Guid competitionKey, Guid tournamentKey, int order, string id)
         {
             {
                 var swiss = GetRavenDbSwiss(documentStore, id);
                 var swissProperties = new SwissProperties(GetCarryForwardCompetitions(connection, swiss));
                 var json = JsonConvert.SerializeObject(swissProperties);
 
-                CompetitionsImporter.ImportCompetition(documentStore, connection, tournamentKey, competitionKey, swiss, "swiss", json);
+                CompetitionsImporter.ImportCompetition(documentStore, connection, competitionKey, tournamentKey, order, swiss, "swiss", json);
             }
         }
 

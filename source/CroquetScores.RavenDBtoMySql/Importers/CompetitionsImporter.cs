@@ -17,29 +17,32 @@ namespace CroquetScores.RavenDBtoMySql.Importers
 
         public static void Import(IDocumentStore documentStore, MySqlConnection connection, Guid tournamentKey, Tournament tournament)
         {
-            // Blocks & Knockouts must be imported before Swisses so Swisses can find Carry Forwarded competitions
-            foreach (var tournamentCompetition in tournament.Competitions.OrderBy(c => c.GetType()))
+            var order = -100;
+
+            foreach (var tournamentCompetition in tournament.Competitions)
             {
                 var id = tournamentCompetition.Id;
                 var competitionType = id.Substring(0, id.IndexOf("/", StringComparison.Ordinal));
                 var competitionKey = Guid.NewGuid();
 
+                order += 100;
+
                 switch (competitionType)
                 {
                     case "blocks":
-                        CompetitionBlockImporter.Import(documentStore, connection, tournamentKey, competitionKey, id);
+                        CompetitionBlockImporter.Import(documentStore, connection, competitionKey, tournamentKey, order, id);
                         break;
 
                     case "knockouts":
-                        CompetitionKnockoutImporter.Import(documentStore, connection, tournamentKey, competitionKey, id);
+                        CompetitionKnockoutImporter.Import(documentStore, connection, competitionKey, tournamentKey, order, id);
                         break;
 
                     case "swisses":
-                        CompetitionSwissImporter.Import(documentStore, connection, tournamentKey, competitionKey, id);
+                        CompetitionSwissImporter.Import(documentStore, connection, competitionKey, tournamentKey, order, id);
                         break;
 
                     case "TeamMatches":
-                        CompetitionTeamMatchImporter.Import(documentStore, connection, tournamentKey, competitionKey, id);
+                        CompetitionTeamMatchImporter.Import(documentStore, connection, competitionKey, tournamentKey, order, id);
                         break;
 
                     default:
@@ -71,11 +74,11 @@ namespace CroquetScores.RavenDBtoMySql.Importers
             return tournamentPlayers;
         }
 
-        public static void ImportCompetition(IDocumentStore documentStore, MySqlConnection connection, Guid tournamentKey, Guid competitionKey, Competition competition, string type, string typeProperties)
+        public static void ImportCompetition(IDocumentStore documentStore, MySqlConnection connection, Guid competitionKey, Guid tournamentKey, int order, Competition competition, string type, string typeProperties)
         {
             Log.Debug($"Competition {competition.Id}");
 
-            InsertCompetition(connection, tournamentKey, competitionKey, competition, type, typeProperties);
+            InsertCompetition(connection, competitionKey, tournamentKey, order, competition, type, typeProperties);
 
             var tournamentPlayerImporters = ImportCompetitionPlayers(connection, competition.Players._Players, tournamentKey, competitionKey);
 
@@ -149,7 +152,7 @@ namespace CroquetScores.RavenDBtoMySql.Importers
 
         private static void ValidateProperty(Guid tournamentKey, Guid competitionKey, string propertyName, string tournamentPropertyValue, string competitionPropertyValue)
         {
-            if (tournamentPropertyValue == competitionPropertyValue)
+            if (string.Equals(tournamentPropertyValue.Trim(), competitionPropertyValue.Trim(), StringComparison.CurrentCultureIgnoreCase))
             {
                 return;
             }
@@ -157,7 +160,7 @@ namespace CroquetScores.RavenDBtoMySql.Importers
             Log.Error($"TournamentPlayer.{propertyName} '{tournamentPropertyValue}' != CompetitionPlayer.{propertyName} '{competitionPropertyValue}'. tournamentKey = {tournamentKey} competitionKey {competitionKey}");
         }
 
-        private static void InsertCompetition(MySqlConnection connection, Guid tournamentKey, Guid competitionKey, Competition competition, string type, string typeProperties)
+        private static void InsertCompetition(MySqlConnection connection, Guid competitionKey, Guid tournamentKey, int order, Competition competition, string type, string typeProperties)
         {
             ValidateColumnLengths(competition);
 
@@ -166,6 +169,7 @@ namespace CroquetScores.RavenDBtoMySql.Importers
                 command.CommandText = "INSERT INTO Competitions (" +
                                       "CompetitionKey," +
                                       "TournamentKey," +
+                                      "Order," +
                                       "Name," +
                                       "Slug," +
                                       "Type," +
@@ -188,6 +192,7 @@ namespace CroquetScores.RavenDBtoMySql.Importers
 
                 command.Parameters.AddWithValue("@CompetitionKey", competitionKey);
                 command.Parameters.AddWithValue("@TournamentKey", tournamentKey);
+                command.Parameters.AddWithValue("@Order", order);
                 command.Parameters.AddWithValue("@Name", competition.Name);
                 command.Parameters.AddWithValue("@Slug", competition.Slug);
                 command.Parameters.AddWithValue("@Type", type);
@@ -206,13 +211,13 @@ namespace CroquetScores.RavenDBtoMySql.Importers
             _maxNameLength = Math.Max(_maxNameLength, competition.Name.Length);
             _maxSlugLength = Math.Max(_maxSlugLength, competition.Slug.Length);
 
-            if (_maxNameLength > 100)
+            if (competition.Name.Length > 100)
             {
                 Log.Error($"Competition {competition.Id} name is too long. {competition.Name}");
                 competition.Name = competition.Name.Substring(0, 100);
             }
 
-            if (_maxSlugLength <= 100)
+            if (competition.Slug.Length <= 100)
             {
                 return;
             }
@@ -223,6 +228,8 @@ namespace CroquetScores.RavenDBtoMySql.Importers
 
         public static void ImportGames(MySqlConnection connection, Guid tournamentKey, Guid competitionKey, CompetitionGames games, List<TournamentPlayer> tournamentPlayerImporters)
         {
+            var order = 0;
+
             using (var command = CreateInsertGameCommand(connection))
             {
                 foreach (var game in games._Games)
@@ -231,6 +238,7 @@ namespace CroquetScores.RavenDBtoMySql.Importers
 
                     command.Parameters["@GameKey"].Value = Guid.NewGuid();
                     command.Parameters["@CompetitionKey"].Value = competitionKey;
+                    command.Parameters["@Order"].Value = order;
                     command.Parameters["@WinnerPlayerKey"].Value = GetTournamentPlayerKey(game.Winner.PlayerId, tournamentPlayerImporters);
                     command.Parameters["@WinnerScore"].Value = game.Winner.Score;
                     command.Parameters["@LoserPlayerKey"].Value = GetTournamentPlayerKey(game.Loser.PlayerId, tournamentPlayerImporters);
@@ -239,6 +247,8 @@ namespace CroquetScores.RavenDBtoMySql.Importers
                     command.Parameters["@LastUpdate"].Value = new DateTime(2024, 1, 1);
 
                     command.ExecuteNonQuery();
+
+                    order += 100;
                 }
             }
         }
@@ -273,6 +283,7 @@ namespace CroquetScores.RavenDBtoMySql.Importers
 
             command.Parameters.AddWithValue("@GameKey", null);
             command.Parameters.AddWithValue("@CompetitionKey", null);
+            command.Parameters.AddWithValue("@Order", null);
             command.Parameters.AddWithValue("@WinnerPlayerKey", null);
             command.Parameters.AddWithValue("@WinnerScore", null);
             command.Parameters.AddWithValue("@LoserPlayerKey", null);
