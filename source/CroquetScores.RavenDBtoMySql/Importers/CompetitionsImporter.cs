@@ -4,9 +4,10 @@ using System.Linq;
 using CroquetScores.RavenDB.Documents;
 using CroquetScores.RavenDB.Documents.Types;
 using CroquetScores.RavenDBtoMySql.Support;
+using CroquetScores.RavenDBtoMySql.TableRows;
+using CroquetScores.RavenDBtoMySql.Tables;
 using MySql.Data.MySqlClient;
 using Raven.Client;
-using TournamentPlayer = CroquetScores.RavenDBtoMySql.TableRows.TournamentPlayer;
 
 namespace CroquetScores.RavenDBtoMySql.Importers
 {
@@ -52,28 +53,6 @@ namespace CroquetScores.RavenDBtoMySql.Importers
             }
         }
 
-        private static List<TournamentPlayer> GetTournamentPlayers(MySqlConnection connection, Guid tournamentKey)
-        {
-            var tournamentPlayers = new List<TournamentPlayer>();
-
-            using (var command = connection.CreateCommand())
-            {
-                command.CommandText = "SELECT * FROM TournamentPlayers " +
-                                      "WHERE TournamentKey = @TournamentKey;";
-                command.Parameters.AddWithValue("@TournamentKey", tournamentKey);
-
-                using (var reader = command.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        tournamentPlayers.Add(new TournamentPlayer(reader));
-                    }
-                }
-            }
-
-            return tournamentPlayers;
-        }
-
         public static void ImportCompetition(IDocumentStore documentStore, MySqlConnection connection, Guid competitionKey, Guid tournamentKey, int order, Competition competition, string type, string typeProperties)
         {
             Log.Debug($"Competition {competition.Id}");
@@ -85,79 +64,26 @@ namespace CroquetScores.RavenDBtoMySql.Importers
             ImportGames(connection, tournamentKey, competitionKey, competition.Games, tournamentPlayerImporters);
         }
 
-        private static List<TournamentPlayer> ImportCompetitionPlayers(MySqlConnection connection, List<CompetitionPlayer> competitionPlayers, Guid tournamentKey, Guid competitionKey)
+        private static List<CompetitionPlayerRow> ImportCompetitionPlayers(MySqlConnection connection, List<CompetitionPlayer> ravenDbCompetitionPlayers, Guid tournamentKey, Guid competitionKey)
         {
-            var tournamentPlayers = GetTournamentPlayers(connection, tournamentKey);
+            var competitionPlayerRows = new List<CompetitionPlayerRow>();
+            var orderBy = 0;
 
-            foreach (var competitionPlayer in competitionPlayers)
+            using (var insertCompetitionPlayerCommand = CreateInsertCompetitionPlayerCommand(connection))
             {
-                var tournamentPlayer = tournamentPlayers.SingleOrDefault(t => t.RavenDbKey == competitionPlayer._Id);
-
-                if (tournamentPlayer == null)
+                foreach (var ravenDbCompetitionPlayer in ravenDbCompetitionPlayers)
                 {
-                    var tournamentPlayerKey = TournamentPlayersImporter.ImportPlayer(connection, tournamentKey, competitionPlayer);
+                    orderBy += 1000;
+                    var playerKey = PlayersTable.FindOrAddByName(connection, ravenDbCompetitionPlayer.Name);
+                    var competitionPlayerRow = new CompetitionPlayerRow(Guid.NewGuid(), competitionKey, playerKey, orderBy, ravenDbCompetitionPlayer);
 
-                    tournamentPlayers.Add(new TournamentPlayer(tournamentPlayerKey, tournamentKey, competitionPlayer));
-                }
-                else
-                {
-                    ValidateProperty(tournamentKey, competitionKey, nameof(tournamentPlayer.Name), tournamentPlayer.Name, competitionPlayer.Name);
-                    ValidateProperty(tournamentKey, competitionKey, nameof(tournamentPlayer.Slug), tournamentPlayer.Slug, competitionPlayer.Slug);
+                    InsertCompetitionPlayerRow(insertCompetitionPlayerCommand, competitionPlayerRow);
 
-                    if (tournamentPlayer.Representing == null && competitionPlayer.Representing == null)
-                    {
-                        continue;
-                    }
-
-                    if (tournamentPlayer.Representing != null)
-                    {
-                        if (string.IsNullOrWhiteSpace(competitionPlayer.Representing))
-                        {
-                            continue;
-                        }
-
-                        if (tournamentPlayer.Representing == competitionPlayer.Representing)
-                        {
-                            continue;
-                        }
-
-                        Log.Error($"Tournament player representing '{tournamentPlayer.Representing}' does not match competition player representing '{competitionPlayer.Representing}'");
-                    }
-
-                    if (competitionPlayer.Representing != null)
-                    {
-                        UpdateRepresenting(connection, tournamentPlayer, competitionPlayer.Representing);
-                    }
+                    competitionPlayerRows.Add(competitionPlayerRow);
                 }
             }
 
-            return tournamentPlayers;
-        }
-
-        private static void UpdateRepresenting(MySqlConnection connection, TournamentPlayer tournamentPlayer, string competitionPlayerRepresenting)
-        {
-            Log.Warning($"Updated representing for {tournamentPlayer.RavenDbKey} {tournamentPlayer.Name} from nothing to {competitionPlayerRepresenting}.");
-
-            using (var command = connection.CreateCommand())
-            {
-                command.CommandText = "UPDATE TournamentPlayers " +
-                                      "SET Representing = @Representing " +
-                                      "WHERE TournamentPlayerKey = @TournamentPlayerKey;";
-
-                command.Parameters.AddWithValue("@Representing", competitionPlayerRepresenting);
-                command.Parameters.AddWithValue("@TournamentPlayerKey", tournamentPlayer.TournamentPlayerKey);
-                command.ExecuteNonQuery();
-            }
-        }
-
-        private static void ValidateProperty(Guid tournamentKey, Guid competitionKey, string propertyName, string tournamentPropertyValue, string competitionPropertyValue)
-        {
-            if (string.Equals(tournamentPropertyValue.Trim(), competitionPropertyValue.Trim(), StringComparison.CurrentCultureIgnoreCase))
-            {
-                return;
-            }
-
-            Log.Error($"TournamentPlayer.{propertyName} '{tournamentPropertyValue}' != CompetitionPlayer.{propertyName} '{competitionPropertyValue}'. tournamentKey = {tournamentKey} competitionKey {competitionKey}");
+            return competitionPlayerRows;
         }
 
         private static void InsertCompetition(MySqlConnection connection, Guid competitionKey, Guid tournamentKey, int order, Competition competition, string type, string typeProperties)
@@ -207,6 +133,55 @@ namespace CroquetScores.RavenDBtoMySql.Importers
             }
         }
 
+        private static void InsertCompetitionPlayerRow(MySqlCommand command, CompetitionPlayerRow competitionPlayerRow)
+        {
+            command.Parameters["@CompetitionPlayerKey"].Value = competitionPlayerRow.CompetitionPlayerKey;
+            command.Parameters["@CompetitionKey"].Value = competitionPlayerRow.CompetitionKey;
+            command.Parameters["@PlayerKey"].Value = competitionPlayerRow.PlayerKey;
+            command.Parameters["@OrderBy"].Value = competitionPlayerRow.OrderBy;
+            command.Parameters["@Representing"].Value = competitionPlayerRow.Representing;
+            command.Parameters["@Created"].Value = competitionPlayerRow.Created;
+            command.Parameters["@LastUpdate"].Value = competitionPlayerRow.LastUpdated;
+            command.Parameters["@RavenDbKey"].Value = competitionPlayerRow.RavenDbKey;
+
+            command.ExecuteNonQuery();
+        }
+
+        private static MySqlCommand CreateInsertCompetitionPlayerCommand(MySqlConnection connection)
+        {
+            var command = connection.CreateCommand();
+
+            command.CommandText = "INSERT INTO CompetitionPlayers (" +
+                                  "CompetitionPlayerKey," +
+                                  "CompetitionKey," +
+                                  "PlayerKey," +
+                                  "OrderBy," +
+                                  "Representing," +
+                                  "Created," +
+                                  "LastUpdate," +
+                                  "RavenDbKey) " +
+                                  "VALUES (" +
+                                  "@CompetitionPlayerKey," +
+                                  "@CompetitionKey," +
+                                  "@PlayerKey," +
+                                  "@OrderBy," +
+                                  "@Representing," +
+                                  "@Created," +
+                                  "@LastUpdate," +
+                                  "@RavenDbKey);";
+
+            command.Parameters.AddWithValue("@CompetitionPlayerKey", null);
+            command.Parameters.AddWithValue("@CompetitionKey", null);
+            command.Parameters.AddWithValue("@PlayerKey", null);
+            command.Parameters.AddWithValue("@OrderBy", null);
+            command.Parameters.AddWithValue("@Representing", null);
+            command.Parameters.AddWithValue("@Created", null);
+            command.Parameters.AddWithValue("@LastUpdate", null);
+            command.Parameters.AddWithValue("@RavenDbKey", null);
+
+            return command;
+        }
+
         private static void ValidateColumnLengths(Competition competition)
         {
             _maxNameLength = Math.Max(_maxNameLength, competition.Name.Length);
@@ -227,7 +202,7 @@ namespace CroquetScores.RavenDBtoMySql.Importers
             competition.Slug = competition.Slug.Substring(0, 100);
         }
 
-        public static void ImportGames(MySqlConnection connection, Guid tournamentKey, Guid competitionKey, CompetitionGames games, List<TournamentPlayer> tournamentPlayerImporters)
+        public static void ImportGames(MySqlConnection connection, Guid tournamentKey, Guid competitionKey, CompetitionGames games, List<CompetitionPlayerRow> competitionPlayerRows)
         {
             var order = 0;
 
@@ -240,9 +215,9 @@ namespace CroquetScores.RavenDBtoMySql.Importers
                     command.Parameters["@GameKey"].Value = Guid.NewGuid();
                     command.Parameters["@CompetitionKey"].Value = competitionKey;
                     command.Parameters["@OrderBy"].Value = order;
-                    command.Parameters["@WinnerPlayerKey"].Value = GetTournamentPlayerKey(game.Winner.PlayerId, tournamentPlayerImporters);
+                    command.Parameters["@WinnerPlayerKey"].Value = GetTournamentPlayerKey(game.Winner.PlayerId, competitionPlayerRows);
                     command.Parameters["@WinnerScore"].Value = game.Winner.Score;
-                    command.Parameters["@LoserPlayerKey"].Value = GetTournamentPlayerKey(game.Loser.PlayerId, tournamentPlayerImporters);
+                    command.Parameters["@LoserPlayerKey"].Value = GetTournamentPlayerKey(game.Loser.PlayerId, competitionPlayerRows);
                     command.Parameters["@LoserScore"].Value = game.Loser.Score;
                     command.Parameters["@Created"].Value = game.CreatedAt;
                     command.Parameters["@LastUpdate"].Value = new DateTime(2024, 1, 1);
@@ -252,9 +227,9 @@ namespace CroquetScores.RavenDBtoMySql.Importers
             }
         }
 
-        private static Guid GetTournamentPlayerKey(int tournamentPlayerId, IEnumerable<TournamentPlayer> tournamentPlayerImporters)
+        private static Guid GetTournamentPlayerKey(int tournamentPlayerId, IEnumerable<CompetitionPlayerRow> tournamentPlayerImporters)
         {
-            return tournamentPlayerImporters.Single(x => x.RavenDbKey == tournamentPlayerId).TournamentPlayerKey;
+            return tournamentPlayerImporters.Single(x => x.RavenDbKey == tournamentPlayerId).PlayerKey;
         }
 
         private static MySqlCommand CreateInsertGameCommand(MySqlConnection connection)

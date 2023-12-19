@@ -113,8 +113,8 @@
     <Compile Include="Competitions\TeamMatchProperties.cs" />
     <Compile Include="Competitions\SwissProperties.cs" />
     <Compile Include="Support\IDataReaderExtensions.cs" />
-    <Compile Include="TableRows\TournamentPlayer.cs" />
-    <Compile Include="Importers\TournamentPlayersImporter.cs" />
+    <Compile Include="TableRows\CompetitionPlayerRow.cs" />
+    <Compile Include="Importers\CompetitionPlayersImporter.cs" />
     <Compile Include="Support\Log.cs" />
     <Compile Include="Importers\TournamentManagersImporter.cs" />
     <Compile Include="Importers\TournamentScorersImporter.cs" />
@@ -128,7 +128,8 @@
     <Compile Include="Tables\MySqlTables.cs" />
     <Compile Include="Support\RavenDbDatabase.cs" />
     <Compile Include="Importers\UsersImporter.cs" />
-    <Compile Include="Tables\TournamentPlayersTable.cs" />
+    <Compile Include="Tables\PlayersTable.cs" />
+    <Compile Include="Tables\CompetitionPlayersTable.cs" />
     <Compile Include="Tables\TournamentScorersTable.cs" />
     <Compile Include="Tables\TournamentsTable.cs" />
     <Compile Include="Tables\TournamentManagersTable.cs" />

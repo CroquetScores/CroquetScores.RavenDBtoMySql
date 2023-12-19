@@ -45,7 +45,6 @@ namespace CroquetScores.RavenDBtoMySql.Importers
                             ExecuteInsertCommand(command, tournamentKey, site, tournament, createdByUserKey);
                             TournamentManagersImporter.Import(tournamentKey, connection, site, tournament.Managers);
                             TournamentScorersImporter.Import(tournamentKey, connection, site, tournament.Scorers);
-                            TournamentPlayersImporter.Import(documentStore, connection, tournamentKey, tournament);
                             CompetitionsImporter.Import(documentStore, connection, tournamentKey, tournament);
                         }
 
@@ -57,7 +56,7 @@ namespace CroquetScores.RavenDBtoMySql.Importers
                 }
             }
 
-            TournamentPlayersImporter.LogStatistics();
+            CompetitionPlayersImporter.LogStatistics();
             CompetitionsImporter.LogStatistics();
 
             Log.Statistic($"Maximum tournament name length {_maxNameLength}.");

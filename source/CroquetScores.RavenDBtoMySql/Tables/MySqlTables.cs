@@ -8,10 +8,11 @@ namespace CroquetScores.RavenDBtoMySql.Tables
         {
             CompetitionsTable.CreateTable(connection);
             GamesTable.CreateTable(connection);
+            PlayersTable.CreateTable(connection);
             UsersTable.CreateTable(connection);
             TournamentsTable.CreateTable(connection);
             TournamentManagersTable.CreateTable(connection);
-            TournamentPlayersTable.CreateTable(connection);
+            CompetitionPlayersTable.CreateTable(connection);
             TournamentScorersTable.CreateTable(connection);
         }
     }
