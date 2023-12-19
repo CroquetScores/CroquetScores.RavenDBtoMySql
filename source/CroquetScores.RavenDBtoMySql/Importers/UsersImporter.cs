@@ -139,7 +139,7 @@ namespace CroquetScores.RavenDBtoMySql.Importers
             var command = connection.CreateCommand();
 
             command.CommandText =
-                "INSERT INTO Users (" +
+                "INSERT INTO users (" +
                 "UserKey," +
                 "Name," +
                 "EmailAddress," +
@@ -196,7 +196,7 @@ namespace CroquetScores.RavenDBtoMySql.Importers
             using (var command = connection.CreateCommand())
             {
                 command.CommandText =
-                    "UPDATE Users SET GateballScoresRavenDbKey = @GateballScoresRavenDbKey WHERE EmailAddress = @EmailAddress;";
+                    "UPDATE users SET GateballScoresRavenDbKey = @GateballScoresRavenDbKey WHERE EmailAddress = @EmailAddress;";
                 command.Parameters.AddWithValue("@GateballScoresRavenDbKey", $"{userId}");
                 command.Parameters.AddWithValue("@EmailAddress", emailAddress);
                 command.ExecuteNonQuery();
@@ -208,7 +208,7 @@ namespace CroquetScores.RavenDBtoMySql.Importers
             using (var command = connection.CreateCommand())
             {
                 command.CommandText =
-                    "SELECT Count(*) FROM Users WHERE EmailAddress = @EmailAddress AND GateballScoresRavenDbKey IS NOT NULL;";
+                    "SELECT Count(*) FROM users WHERE EmailAddress = @EmailAddress AND GateballScoresRavenDbKey IS NOT NULL;";
                 command.Parameters.AddWithValue("@EmailAddress", emailAddress);
 
                 var count = command.ExecuteScalar();
@@ -275,7 +275,7 @@ namespace CroquetScores.RavenDBtoMySql.Importers
         {
             using (var command = connection.CreateCommand())
             {
-                command.CommandText = "SELECT Count(*) FROM Users WHERE EmailAddress = @EmailAddress;";
+                command.CommandText = "SELECT Count(*) FROM users WHERE EmailAddress = @EmailAddress;";
                 command.Parameters.AddWithValue("@EmailAddress", userEmailAddress);
 
                 var count = command.ExecuteScalar();

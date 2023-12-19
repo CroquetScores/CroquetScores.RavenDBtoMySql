@@ -8,10 +8,10 @@ namespace CroquetScores.RavenDBtoMySql.Tables
     {
         public static void CreateTable(MySqlConnection connection)
         {
-            Log.Progress("Creating Players table...");
+            Log.Progress("Creating players table...");
             using (var command = connection.CreateCommand())
             {
-                command.CommandText = "CREATE TABLE Players (" +
+                command.CommandText = "CREATE TABLE players (" +
                                       "PlayerKey CHAR(36) NOT NULL," +
                                       "Name VARCHAR(500)," +
                                       "Created DATETIME NOT NULL," +
@@ -27,7 +27,7 @@ namespace CroquetScores.RavenDBtoMySql.Tables
             using (var command = connection.CreateCommand())
             {
                 command.CommandText = "SELECT PlayerKey " +
-                                      "FROM Players " +
+                                      "FROM players " +
                                       "WHERE Name = @Name;";
 
                 command.Parameters.AddWithValue("name", name);
@@ -44,7 +44,7 @@ namespace CroquetScores.RavenDBtoMySql.Tables
             {
                 var playerKey = Guid.NewGuid();
 
-                command.CommandText = "INSERT INTO Players (" +
+                command.CommandText = "INSERT INTO players (" +
                                       "PlayerKey," +
                                       "Name," +
                                       "Created," +

@@ -33,7 +33,7 @@ namespace CroquetScores.RavenDBtoMySql.Importers
 
             using (var command = connection.CreateCommand())
             {
-                command.CommandText = "SELECT CompetitionKey FROM Competitions " +
+                command.CommandText = "SELECT CompetitionKey FROM competitions " +
                                       "WHERE RavenDbKey = @RavenDbKey;";
 
                 command.Parameters.AddWithValue("@RavenDbKey", null);

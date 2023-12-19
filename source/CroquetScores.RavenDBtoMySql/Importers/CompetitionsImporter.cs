@@ -92,7 +92,7 @@ namespace CroquetScores.RavenDBtoMySql.Importers
 
             using (var command = connection.CreateCommand())
             {
-                command.CommandText = "INSERT INTO Competitions (" +
+                command.CommandText = "INSERT INTO competitions (" +
                                       "CompetitionKey," +
                                       "TournamentKey," +
                                       "OrderBy," +
@@ -151,7 +151,7 @@ namespace CroquetScores.RavenDBtoMySql.Importers
         {
             var command = connection.CreateCommand();
 
-            command.CommandText = "INSERT INTO CompetitionPlayers (" +
+            command.CommandText = "INSERT INTO competition_players (" +
                                   "CompetitionPlayerKey," +
                                   "CompetitionKey," +
                                   "PlayerKey," +
@@ -236,7 +236,7 @@ namespace CroquetScores.RavenDBtoMySql.Importers
         {
             var command = connection.CreateCommand();
 
-            command.CommandText = "INSERT INTO Games (" +
+            command.CommandText = "INSERT INTO games (" +
                                   "GameKey," +
                                   "CompetitionKey," +
                                   "OrderBy," +

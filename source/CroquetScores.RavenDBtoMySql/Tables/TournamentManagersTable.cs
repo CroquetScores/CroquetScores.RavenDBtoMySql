@@ -7,20 +7,16 @@ namespace CroquetScores.RavenDBtoMySql.Tables
     {
         public static void CreateTable(MySqlConnection connection)
         {
-            Log.Progress("Creating TournamentManagers table...");
+            Log.Progress("Creating tournament_managers table...");
             using (var command = connection.CreateCommand())
             {
-                command.CommandText = "CREATE TABLE TournamentManagers (" +
+                command.CommandText = "CREATE TABLE tournament_managers (" +
                                       "TournamentManagerKey CHAR(36) NOT NULL," +
                                       "TournamentKey CHAR(36) NOT NULL," +
                                       "UserKey CHAR(36) NOT NULL," +
                                       "Created DATETIME NOT NULL," +
                                       "LastUpdate DATETIME NOT NULL," +
                                       "PRIMARY KEY (TournamentManagerKey));";
-                command.ExecuteNonQuery();
-
-                command.CommandText = "ALTER TABLE TournamentManagers" +
-                                      " ADD INDEX TournamentKey (TournamentKey ASC) VISIBLE;";
                 command.ExecuteNonQuery();
             }
         }

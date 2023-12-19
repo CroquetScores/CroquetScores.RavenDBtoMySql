@@ -42,7 +42,7 @@ namespace CroquetScores.RavenDBtoMySql.Importers
         {
             var command = connection.CreateCommand();
 
-            command.CommandText = "INSERT INTO CompetitonPlayers (" +
+            command.CommandText = "INSERT INTO competiton_players (" +
                                   "CompetitonPlayerKey," +
                                   "CompetitonKey," +
                                   "OrderBy," +

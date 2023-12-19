@@ -9,10 +9,10 @@ namespace CroquetScores.RavenDBtoMySql.Tables
     {
         public static void CreateTable(MySqlConnection connection)
         {
-            Log.Progress("Creating Users table...");
+            Log.Progress("Creating users table...");
             using (var command = connection.CreateCommand())
             {
-                command.CommandText = "CREATE TABLE Users (" +
+                command.CommandText = "CREATE TABLE users (" +
                                       "UserKey CHAR(36) NOT NULL," +
                                       "Name VARCHAR(200) NOT NULL," +
                                       "EmailAddress VARCHAR(200) NOT NULL," +
@@ -31,7 +31,7 @@ namespace CroquetScores.RavenDBtoMySql.Tables
                                       "PRIMARY KEY (UserKey));";
                 command.ExecuteNonQuery();
 
-                command.CommandText = "ALTER TABLE Users" +
+                command.CommandText = "ALTER TABLE users" +
                                       " ADD UNIQUE INDEX EmailAddress_UNIQUE (EmailAddress ASC) VISIBLE;";
                 command.ExecuteNonQuery();
             }
@@ -44,7 +44,7 @@ namespace CroquetScores.RavenDBtoMySql.Tables
             var command = connection.CreateCommand();
 
             command.CommandText =
-                "SELECT UserKey FROM Users WHERE CroquetScoresRavenDbKey = @CroquetScoresRavenDbKey";
+                "SELECT UserKey FROM users WHERE CroquetScoresRavenDbKey = @CroquetScoresRavenDbKey";
 
             command.Parameters.AddWithValue("@CroquetScoresRavenDbKey", croquetScoresRavenDbKey);
 
@@ -57,7 +57,7 @@ namespace CroquetScores.RavenDBtoMySql.Tables
             var command = connection.CreateCommand();
 
             command.CommandText =
-                "SELECT UserKey FROM Users WHERE GateballScoresRavenDbKey = @GateballScoresRavenDbKey";
+                "SELECT UserKey FROM users WHERE GateballScoresRavenDbKey = @GateballScoresRavenDbKey";
 
             command.Parameters.AddWithValue("@GateballScoresRavenDbKey", gateballScoresRavenDbKey);
 

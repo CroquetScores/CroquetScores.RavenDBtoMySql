@@ -14,7 +14,7 @@ namespace CroquetScores.RavenDBtoMySql.Importers
             using (var command = connection.CreateCommand())
             {
                 command.CommandText =
-                    "INSERT INTO TournamentScorers (TournamentScorerKey, TournamentKey, UserKey, Created, LastUpdate) " +
+                    "INSERT INTO tournament_scorers (TournamentScorerKey, TournamentKey, UserKey, Created, LastUpdate) " +
                     "VALUES (@TournamentScorerKey, @TournamentKey, @UserKey, @Created, @LastUpdate)";
 
                 command.Parameters.AddWithValue("@TournamentScorerKey", null);

@@ -7,10 +7,10 @@ namespace CroquetScores.RavenDBtoMySql.Tables
     {
         public static void CreateTable(MySqlConnection connection)
         {
-            Log.Progress("Creating CompetitionPlayers table...");
+            Log.Progress("Creating competition_players table...");
             using (var command = connection.CreateCommand())
             {
-                command.CommandText = "CREATE TABLE CompetitionPlayers (" +
+                command.CommandText = "CREATE TABLE competition_players (" +
                                       "CompetitionPlayerKey CHAR(36) NOT NULL," +
                                       "CompetitionKey CHAR(36) NOT NULL," +
                                       "PlayerKey CHAR(36) NOT NULL," +
