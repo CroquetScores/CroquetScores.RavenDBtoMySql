@@ -59,9 +59,9 @@ namespace CroquetScores.RavenDBtoMySql.Importers
 
             InsertCompetition(connection, competitionKey, tournamentKey, order, competition, type, typeProperties);
 
-            var tournamentPlayerImporters = ImportCompetitionPlayers(connection, competition.Players._Players, tournamentKey, competitionKey);
+            var competitionPlayerRows = ImportCompetitionPlayers(connection, competition.Players._Players, tournamentKey, competitionKey);
 
-            ImportGames(connection, tournamentKey, competitionKey, competition.Games, tournamentPlayerImporters);
+            ImportGames(connection, tournamentKey, competitionKey, competition.Games, competitionPlayerRows);
         }
 
         private static List<CompetitionPlayerRow> ImportCompetitionPlayers(MySqlConnection connection, List<CompetitionPlayer> ravenDbCompetitionPlayers, Guid tournamentKey, Guid competitionKey)
@@ -215,9 +215,9 @@ namespace CroquetScores.RavenDBtoMySql.Importers
                     command.Parameters["@GameKey"].Value = Guid.NewGuid();
                     command.Parameters["@CompetitionKey"].Value = competitionKey;
                     command.Parameters["@OrderBy"].Value = order;
-                    command.Parameters["@WinnerPlayerKey"].Value = GetTournamentPlayerKey(game.Winner.PlayerId, competitionPlayerRows);
+                    command.Parameters["@WinnerPlayerKey"].Value = GetPlayerKey(game.Winner.PlayerId, competitionPlayerRows);
                     command.Parameters["@WinnerScore"].Value = game.Winner.Score;
-                    command.Parameters["@LoserPlayerKey"].Value = GetTournamentPlayerKey(game.Loser.PlayerId, competitionPlayerRows);
+                    command.Parameters["@LoserPlayerKey"].Value = GetPlayerKey(game.Loser.PlayerId, competitionPlayerRows);
                     command.Parameters["@LoserScore"].Value = game.Loser.Score;
                     command.Parameters["@Created"].Value = game.CreatedAt;
                     command.Parameters["@LastUpdate"].Value = new DateTime(2024, 1, 1);
@@ -227,9 +227,24 @@ namespace CroquetScores.RavenDBtoMySql.Importers
             }
         }
 
-        private static Guid GetTournamentPlayerKey(int tournamentPlayerId, IEnumerable<CompetitionPlayerRow> tournamentPlayerImporters)
+        private static Guid GetPlayerKey(int tournamentPlayerId, IEnumerable<CompetitionPlayerRow> competitionPlayerRows)
         {
-            return tournamentPlayerImporters.Single(x => x.RavenDbKey == tournamentPlayerId).PlayerKey;
+            var rows = competitionPlayerRows.Where(x => x.RavenDbKey == tournamentPlayerId).ToArray();
+
+            switch (rows.Length)
+            {
+                case 0:
+                    throw new Exception($"tournamentPlayerId: {tournamentPlayerId} was not found.");
+                case 1:
+                    return rows[0].PlayerKey;
+            }
+
+            if (rows[0].PlayerKey == PlayersTable.ByePlayerKey)
+            {
+                return PlayersTable.ByePlayerKey;
+            }
+
+            throw new Exception($"tournamentPlayerId: {tournamentPlayerId} exists more than once.");
         }
 
         private static MySqlCommand CreateInsertGameCommand(MySqlConnection connection)

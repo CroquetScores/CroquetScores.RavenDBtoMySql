@@ -6,6 +6,8 @@ namespace CroquetScores.RavenDBtoMySql.Tables
 {
     internal class PlayersTable
     {
+        public static readonly Guid ByePlayerKey = Guid.Empty;
+
         public static void CreateTable(MySqlConnection connection)
         {
             Log.Progress("Creating players table...");
@@ -23,6 +25,23 @@ namespace CroquetScores.RavenDBtoMySql.Tables
                                       "ADD INDEX Name (Name ASC) VISIBLE;";
                 command.ExecuteNonQuery();
 
+                command.CommandText = "INSERT INTO players (" +
+                                      "PlayerKey, " +
+                                      "Name, " +
+                                      "Created, " +
+                                      "LastUpdate) " +
+                                      "VALUES (" +
+                                      "@PlayerKey, " +
+                                      "@Name, " +
+                                      "@Created, " +
+                                      "@LastUpdate);";
+
+                command.Parameters.AddWithValue("@PlayerKey", ByePlayerKey);
+                command.Parameters.AddWithValue("@Name", "Bye");
+                command.Parameters.AddWithValue("@Created", new DateTime(2024, 1, 1));
+                command.Parameters.AddWithValue("@LastUpdate", new DateTime(2024, 1, 1));
+
+                command.ExecuteNonQuery();
             }
         }
 
