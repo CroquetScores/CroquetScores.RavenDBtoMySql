@@ -7,6 +7,7 @@ namespace CroquetScores.RavenDBtoMySql.Tables
     internal class PlayersTable
     {
         public static readonly Guid ByePlayerKey = Guid.Empty;
+        private static int _maxNameLength;
 
         public static void CreateTable(MySqlConnection connection)
         {
@@ -65,6 +66,14 @@ namespace CroquetScores.RavenDBtoMySql.Tables
 
             using (var command = connection.CreateCommand())
             {
+                _maxNameLength = Math.Max(_maxNameLength, name.Length);
+
+                if (name.Length > 500)
+                {
+                    name = name.Substring(0, 500);
+                    Log.Error($"Player name is too long. {name}");
+                }
+
                 var playerKey = Guid.NewGuid();
 
                 command.CommandText = "INSERT INTO players (" +
@@ -87,6 +96,11 @@ namespace CroquetScores.RavenDBtoMySql.Tables
 
                 return playerKey;
             }
+        }
+
+        public static void LogStatistics()
+        {
+            Log.Statistic($"Longest player name {_maxNameLength}");
         }
     }
 }

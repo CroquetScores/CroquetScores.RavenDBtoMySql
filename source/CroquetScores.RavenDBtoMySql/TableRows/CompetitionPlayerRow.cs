@@ -36,7 +36,7 @@ namespace CroquetScores.RavenDBtoMySql.TableRows
         public Guid CompetitionKey { get; private set; }
         public Guid PlayerKey { get; private set; }
         public int OrderBy { get; private set; }
-        public string Representing { get; private set; }
+        public string Representing { get; set; }
         public string Slug { get; private set; }
         public DateTime Created { get; private set; }
         public DateTime LastUpdated { get; private set; }

@@ -56,8 +56,8 @@ namespace CroquetScores.RavenDBtoMySql.Importers
                 }
             }
 
-            CompetitionPlayersImporter.LogStatistics();
             CompetitionsImporter.LogStatistics();
+            PlayersTable.LogStatistics();
 
             Log.Statistic($"Maximum tournament name length {_maxNameLength}.");
             Log.Statistic($"Maximum time zone id length {_maxTimeZoneIdLength}.");

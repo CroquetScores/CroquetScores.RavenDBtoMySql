@@ -114,7 +114,6 @@
     <Compile Include="Competitions\SwissProperties.cs" />
     <Compile Include="Support\IDataReaderExtensions.cs" />
     <Compile Include="TableRows\CompetitionPlayerRow.cs" />
-    <Compile Include="Importers\CompetitionPlayersImporter.cs" />
     <Compile Include="Support\Log.cs" />
     <Compile Include="Importers\TournamentManagersImporter.cs" />
     <Compile Include="Importers\TournamentScorersImporter.cs" />

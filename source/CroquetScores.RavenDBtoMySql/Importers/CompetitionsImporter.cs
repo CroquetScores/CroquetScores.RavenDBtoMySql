@@ -13,8 +13,9 @@ namespace CroquetScores.RavenDBtoMySql.Importers
 {
     internal class CompetitionsImporter
     {
-        private static int _maxNameLength;
-        private static int _maxSlugLength;
+        private static int _maxCompetitionNameLength;
+        private static int _maxCompetitionSlugLength;
+        private static int _maxPlayerRepresentingLength;
 
         public static void Import(IDocumentStore documentStore, MySqlConnection connection, Guid tournamentKey, Tournament tournament)
         {
@@ -135,6 +136,14 @@ namespace CroquetScores.RavenDBtoMySql.Importers
 
         private static void InsertCompetitionPlayerRow(MySqlCommand command, CompetitionPlayerRow competitionPlayerRow)
         {
+            _maxPlayerRepresentingLength = Math.Max(_maxPlayerRepresentingLength, competitionPlayerRow.Representing.GetLength());
+
+            if (competitionPlayerRow.Representing.GetLength() > 100)
+            {
+                Log.Error($"Competition player row {competitionPlayerRow.CompetitionPlayerKey} representing is too long. {competitionPlayerRow.Representing}");
+                competitionPlayerRow.Representing = competitionPlayerRow.Representing.Substring(0, 100);
+            }
+
             command.Parameters["@CompetitionPlayerKey"].Value = competitionPlayerRow.CompetitionPlayerKey;
             command.Parameters["@CompetitionKey"].Value = competitionPlayerRow.CompetitionKey;
             command.Parameters["@PlayerKey"].Value = competitionPlayerRow.PlayerKey;
@@ -184,8 +193,8 @@ namespace CroquetScores.RavenDBtoMySql.Importers
 
         private static void ValidateColumnLengths(Competition competition)
         {
-            _maxNameLength = Math.Max(_maxNameLength, competition.Name.Length);
-            _maxSlugLength = Math.Max(_maxSlugLength, competition.Slug.Length);
+            _maxCompetitionNameLength = Math.Max(_maxCompetitionNameLength, competition.Name.Length);
+            _maxCompetitionSlugLength = Math.Max(_maxCompetitionSlugLength, competition.Slug.Length);
 
             if (competition.Name.Length > 100)
             {
@@ -287,8 +296,9 @@ namespace CroquetScores.RavenDBtoMySql.Importers
 
         public static void LogStatistics()
         {
-            Log.Statistic($"Longest Competition.Name {_maxNameLength}");
-            Log.Statistic($"Longest Competition.Slug {_maxSlugLength}");
+            Log.Statistic($"Longest Competition.Name {_maxCompetitionNameLength}");
+            Log.Statistic($"Longest Competition.Slug {_maxCompetitionSlugLength}");
+            Log.Statistic($"Longest Player.Representing {_maxPlayerRepresentingLength}");
         }
     }
 }
