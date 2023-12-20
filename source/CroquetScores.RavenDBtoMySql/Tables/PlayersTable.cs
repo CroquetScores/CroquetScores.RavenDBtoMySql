@@ -17,8 +17,12 @@ namespace CroquetScores.RavenDBtoMySql.Tables
                                       "Created DATETIME NOT NULL," +
                                       "LastUpdate DATETIME NOT NULL, " +
                                       "PRIMARY KEY (PlayerKey));";
-
                 command.ExecuteNonQuery();
+
+                command.CommandText = "ALTER TABLE players " +
+                                      "ADD INDEX Name (Name ASC) VISIBLE;";
+                command.ExecuteNonQuery();
+
             }
         }
 

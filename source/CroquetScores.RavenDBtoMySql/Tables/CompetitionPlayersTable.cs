@@ -20,7 +20,30 @@ namespace CroquetScores.RavenDBtoMySql.Tables
                                       "LastUpdate DATETIME NOT NULL," +
                                       "RavenDbKey INT," +
                                       "PRIMARY KEY (CompetitionPlayerKey));";
+                command.ExecuteNonQuery();
 
+                command.CommandText = "ALTER TABLE competition_players " +
+                                      "ADD INDEX PlayerKey (PlayerKey ASC) VISIBLE;";
+                command.ExecuteNonQuery();
+
+                command.CommandText = "ALTER TABLE competition_players " +
+                                      "ADD CONSTRAINT fk_players_competition_players_PlayerKey " +
+                                      "FOREIGN KEY(PlayerKey) " +
+                                      "REFERENCES players (PlayerKey) " +
+                                      "ON DELETE NO ACTION " +
+                                      "ON UPDATE NO ACTION;";
+                command.ExecuteNonQuery();
+
+                command.CommandText = "ALTER TABLE competition_players " +
+                                      "ADD INDEX CompetitionKey (CompetitionKey ASC) VISIBLE;";
+                command.ExecuteNonQuery();
+
+                command.CommandText = "ALTER TABLE competition_players " +
+                                      "ADD CONSTRAINT fk_competitions_competition_players_CompetitionKey " +
+                                      "FOREIGN KEY(CompetitionKey) " +
+                                      "REFERENCES competitions (CompetitionKey) " +
+                                      "ON DELETE NO ACTION " +
+                                      "ON UPDATE NO ACTION;";
                 command.ExecuteNonQuery();
             }
         }

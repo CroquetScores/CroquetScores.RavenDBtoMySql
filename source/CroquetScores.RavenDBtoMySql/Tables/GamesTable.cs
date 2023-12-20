@@ -23,6 +23,42 @@ namespace CroquetScores.RavenDBtoMySql.Tables
                                       "PRIMARY KEY (GameKey));";
 
                 command.ExecuteNonQuery();
+
+                command.CommandText = "ALTER TABLE games " +
+                                      "ADD INDEX CompetitionKey (CompetitionKey ASC) VISIBLE;";
+                command.ExecuteNonQuery();
+
+                command.CommandText = "ALTER TABLE games " +
+                                      "ADD CONSTRAINT fk_competitions_games_CompetitionKey " +
+                                      "FOREIGN KEY(CompetitionKey) " +
+                                      "REFERENCES competitions (CompetitionKey) " +
+                                      "ON DELETE NO ACTION " +
+                                      "ON UPDATE NO ACTION;";
+                command.ExecuteNonQuery();
+
+                command.CommandText = "ALTER TABLE games " +
+                                      "ADD INDEX WinnerPlayerKey (WinnerPlayerKey ASC) VISIBLE;";
+                command.ExecuteNonQuery();
+
+                command.CommandText = "ALTER TABLE games " +
+                                      "ADD CONSTRAINT fk_players_games_WinnerPlayerKey " +
+                                      "FOREIGN KEY (WinnerPlayerKey) " +
+                                      "REFERENCES players (PlayerKey)" +
+                                      "ON DELETE NO ACTION " +
+                                      "ON UPDATE NO ACTION;";
+                command.ExecuteNonQuery();
+
+                command.CommandText = "ALTER TABLE games " +
+                                      "ADD INDEX LoserPlayerKey (LoserPlayerKey ASC) VISIBLE;";
+                command.ExecuteNonQuery();
+
+                command.CommandText = "ALTER TABLE games " +
+                                      "ADD CONSTRAINT fk_players_games_LoserPlayerKey " +
+                                      "FOREIGN KEY (LoserPlayerKey) " +
+                                      "REFERENCES players (PlayerKey)" +
+                                      "ON DELETE NO ACTION " +
+                                      "ON UPDATE NO ACTION;";
+                command.ExecuteNonQuery();
             }
         }
     }
