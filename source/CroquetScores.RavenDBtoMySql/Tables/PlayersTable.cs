@@ -16,7 +16,7 @@ namespace CroquetScores.RavenDBtoMySql.Tables
             {
                 command.CommandText = "CREATE TABLE players (" +
                                       "PlayerKey CHAR(36) NOT NULL," +
-                                      "Name VARCHAR(500)," +
+                                      "Name VARCHAR(200)," +
                                       "Created DATETIME NOT NULL," +
                                       "LastUpdate DATETIME NOT NULL, " +
                                       "PRIMARY KEY (PlayerKey));";
@@ -68,9 +68,9 @@ namespace CroquetScores.RavenDBtoMySql.Tables
             {
                 _maxNameLength = Math.Max(_maxNameLength, name.Length);
 
-                if (name.Length > 500)
+                if (name.Length > 200)
                 {
-                    name = name.Substring(0, 500);
+                    name = name.Substring(0, 200);
                     Log.Error($"Player name is too long. {name}");
                 }
 

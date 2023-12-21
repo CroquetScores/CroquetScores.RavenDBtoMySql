@@ -138,10 +138,10 @@ namespace CroquetScores.RavenDBtoMySql.Importers
         {
             _maxPlayerRepresentingLength = Math.Max(_maxPlayerRepresentingLength, competitionPlayerRow.Representing.GetLength());
 
-            if (competitionPlayerRow.Representing.GetLength() > 100)
+            if (competitionPlayerRow.Representing.GetLength() > 200)
             {
                 Log.Error($"Competition player row {competitionPlayerRow.CompetitionPlayerKey} representing is too long. {competitionPlayerRow.Representing}");
-                competitionPlayerRow.Representing = competitionPlayerRow.Representing.Substring(0, 100);
+                competitionPlayerRow.Representing = competitionPlayerRow.Representing.Substring(0, 200);
             }
 
             command.Parameters["@CompetitionPlayerKey"].Value = competitionPlayerRow.CompetitionPlayerKey;
@@ -196,19 +196,19 @@ namespace CroquetScores.RavenDBtoMySql.Importers
             _maxCompetitionNameLength = Math.Max(_maxCompetitionNameLength, competition.Name.Length);
             _maxCompetitionSlugLength = Math.Max(_maxCompetitionSlugLength, competition.Slug.Length);
 
-            if (competition.Name.Length > 100)
+            if (competition.Name.Length > 200)
             {
                 Log.Error($"Competition {competition.Id} name is too long. {competition.Name}");
-                competition.Name = competition.Name.Substring(0, 100);
+                competition.Name = competition.Name.Substring(0, 200);
             }
 
-            if (competition.Slug.Length <= 100)
+            if (competition.Slug.Length <= 200)
             {
                 return;
             }
 
             Log.Error($"Competition {competition.Id} slug is too long. {competition.Slug}");
-            competition.Slug = competition.Slug.Substring(0, 100);
+            competition.Slug = competition.Slug.Substring(0, 200);
         }
 
         public static void ImportGames(MySqlConnection connection, Guid tournamentKey, Guid competitionKey, CompetitionGames games, List<CompetitionPlayerRow> competitionPlayerRows)

@@ -13,8 +13,8 @@ namespace CroquetScores.RavenDBtoMySql.Tables
                 command.CommandText = "CREATE TABLE tournaments (" +
                                       "TournamentKey CHAR(36) NOT NULL, " +
                                       "Site VARCHAR(50) NOT NULL, " +
-                                      "Name VARCHAR(600) NOT NULL, " +
-                                      "Slug VARCHAR(600) NOT NULL, " +
+                                      "Name VARCHAR(200) NOT NULL, " +
+                                      "Slug VARCHAR(200) NOT NULL, " +
                                       "Start DATETIME NOT NULL, " +
                                       "Finish DATETIME NOT NULL, " +
                                       "CreatedBy_UserKey CHAR(36) NOT NULL, " +

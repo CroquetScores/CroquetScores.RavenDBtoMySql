@@ -14,8 +14,8 @@ namespace CroquetScores.RavenDBtoMySql.Tables
                                       "CompetitionKey CHAR(36) NOT NULL," +
                                       "TournamentKey CHAR(36) NOT NULL," +
                                       "OrderBy INT NOT NULL," +
-                                      "Name VARCHAR(100) NOT NULL," +
-                                      "Slug VARCHAR(100) NOT NULL," +
+                                      "Name VARCHAR(200) NOT NULL," +
+                                      "Slug VARCHAR(200) NOT NULL," +
                                       "Type VARCHAR(10) NOT NULL," +
                                       "TypeProperties JSON NOT NULL," +
                                       "IsArchived BOOLEAN NOT NULL," +
