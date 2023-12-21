@@ -66,7 +66,7 @@ namespace CroquetScores.RavenDBtoMySql.Support
 
         public static void Debug(string message)
         {
-            Console.WriteLine($"DEBUG: {message}");
+            // Console.WriteLine($"DEBUG: {message}");
         }
 
         public static void Error(string message)
