@@ -7,15 +7,15 @@ namespace CroquetScores.RavenDBtoMySql.Competitions
     {
         public TeamMatchProperties(TeamMatch teamMatch)
         {
-            Start = teamMatch.Start;
-            Finish = teamMatch.Finish;
+            Starts = teamMatch.Starts;
+            Finishes = teamMatch.Finishes;
             ExpectedMatches = teamMatch.ExpectedMatches;
             BestOf = teamMatch.BestOf;
             Group = teamMatch.Group;
         }
 
-        public DateTime Start { get; private set; }
-        public DateTime Finish { get; private set; }
+        public DateTime Starts { get; private set; }
+        public DateTime Finishes { get; private set; }
         public int ExpectedMatches { get; private set; }
         public int BestOf { get; private set; }
         public string Group { get; private set; }

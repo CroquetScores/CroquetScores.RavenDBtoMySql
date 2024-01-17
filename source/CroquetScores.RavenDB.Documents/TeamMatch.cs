@@ -11,9 +11,9 @@ namespace CroquetScores.RavenDB.Documents
 
         public string TeamB { get; set; }
 
-        public DateTime Start { get; set; }
+        public DateTime Starts { get; set; }
 
-        public DateTime Finish { get; set; }
+        public DateTime Finishes { get; set; }
 
         public int ExpectedMatches { get; set; }
 

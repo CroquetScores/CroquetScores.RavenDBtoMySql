@@ -10,9 +10,9 @@ namespace CroquetScores.RavenDB.Documents
 
         public string Slug { get; set; }
 
-        public DateTime Start { get; set; }
+        public DateTime Starts { get; set; }
 
-        public DateTime Finish { get; set; }
+        public DateTime Finishes { get; set; }
 
         public User.Reference CreatedBy { get; set; }
 
@@ -30,7 +30,7 @@ namespace CroquetScores.RavenDB.Documents
 
         public string TournamentType { get; set; }
 
-        public string TimeZoneId { get; set; }
+        public string TimeZoneInfo { get; set; }
 
         public class Reference : RavenDocumentReference
         {

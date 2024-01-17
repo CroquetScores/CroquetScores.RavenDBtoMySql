@@ -15,14 +15,14 @@ namespace CroquetScores.RavenDBtoMySql.Tables
                                       "Site VARCHAR(50) NOT NULL, " +
                                       "Name VARCHAR(200) NOT NULL, " +
                                       "Slug VARCHAR(200) NOT NULL, " +
-                                      "Start DATETIME NOT NULL, " +
-                                      "Finish DATETIME NOT NULL, " +
+                                      "Starts DATETIME NOT NULL, " +
+                                      "Finishes DATETIME NOT NULL, " +
                                       "CreatedBy_UserKey CHAR(36) NOT NULL, " +
                                       "IsArchived BOOLEAN NOT NULL, " +
                                       "IsMajorTournament BOOLEAN NOT NULL, " +
                                       "SportType VARCHAR(3) NOT NULL, " +
                                       "TournamentType VARCHAR(20) NOT NULL, " +
-                                      "TimeZoneId VARCHAR(50) NOT NULL, " +
+                                      "TimeZoneInfo VARCHAR(50) NOT NULL, " +
                                       "Created DATETIME NOT NULL, " +
                                       "LastUpdate DATETIME NOT NULL, " +
                                       "PRIMARY KEY (TournamentKey));";

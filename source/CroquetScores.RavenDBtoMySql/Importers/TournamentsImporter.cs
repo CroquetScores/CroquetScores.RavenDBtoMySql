@@ -11,7 +11,7 @@ namespace CroquetScores.RavenDBtoMySql.Importers
     internal class TournamentsImporter
     {
         private static int _maxNameLength;
-        private static int _maxTimeZoneIdLength;
+        private static int _maxTimeZoneInfoLength;
 
         public static void Import(IDocumentStore documentStore, MySqlConnection connection, string site)
         {
@@ -60,7 +60,7 @@ namespace CroquetScores.RavenDBtoMySql.Importers
             PlayersTable.LogStatistics();
 
             Log.Statistic($"Maximum tournament name length {_maxNameLength}.");
-            Log.Statistic($"Maximum time zone id length {_maxTimeZoneIdLength}.");
+            Log.Statistic($"Maximum time zone id length {_maxTimeZoneInfoLength}.");
         }
 
         private static MySqlCommand CreateInsertCommand(MySqlConnection connection)
@@ -73,14 +73,14 @@ namespace CroquetScores.RavenDBtoMySql.Importers
                 "Site, " +
                 "Name, " +
                 "Slug, " +
-                "Start, " +
-                "Finish, " +
+                "Starts, " +
+                "Finishes, " +
                 "CreatedBy_UserKey, " +
                 "IsArchived, " +
                 "IsMajorTournament, " +
                 "SportType, " +
                 "TournamentType, " +
-                "TimeZoneId, " +
+                "TimeZoneInfo, " +
                 "Created, " +
                 "LastUpdate)" +
                 "VALUES (" +
@@ -88,14 +88,14 @@ namespace CroquetScores.RavenDBtoMySql.Importers
                 "@Site, " +
                 "@Name, " +
                 "@Slug, " +
-                "@Start, " +
-                "@Finish, " +
+                "@Starts, " +
+                "@Finishes, " +
                 "@CreatedBy_UserKey, " +
                 "@IsArchived, " +
                 "@IsMajorTournament, " +
                 "@SportType, " +
                 "@TournamentType, " +
-                "@TimeZoneId, " +
+                "@TimeZoneInfo, " +
                 "@Created, " +
                 "@LastUpdate)";
 
@@ -103,14 +103,14 @@ namespace CroquetScores.RavenDBtoMySql.Importers
             command.Parameters.AddWithValue("@Site", null);
             command.Parameters.AddWithValue("@Name", null);
             command.Parameters.AddWithValue("@Slug", null);
-            command.Parameters.AddWithValue("@Start", null);
-            command.Parameters.AddWithValue("@Finish", null);
+            command.Parameters.AddWithValue("@Starts", null);
+            command.Parameters.AddWithValue("@Finishes", null);
             command.Parameters.AddWithValue("@CreatedBy_UserKey", null);
             command.Parameters.AddWithValue("@IsArchived", null);
             command.Parameters.AddWithValue("@IsMajorTournament", null);
             command.Parameters.AddWithValue("@SportType", null);
             command.Parameters.AddWithValue("@TournamentType", null);
-            command.Parameters.AddWithValue("@TimeZoneId", null);
+            command.Parameters.AddWithValue("@TimeZoneInfo", null);
             command.Parameters.AddWithValue("@Created", null);
             command.Parameters.AddWithValue("@LastUpdate", null);
 
@@ -122,7 +122,7 @@ namespace CroquetScores.RavenDBtoMySql.Importers
             Log.Debug($"Tournament {tournament.Id}");
 
             _maxNameLength = Math.Max(_maxNameLength, tournament.Name.Length);
-            _maxTimeZoneIdLength = Math.Max(_maxTimeZoneIdLength, tournament.TimeZoneId.Length);
+            _maxTimeZoneInfoLength = Math.Max(_maxTimeZoneInfoLength, tournament.TimeZoneInfo.Length);
 
             if (tournament.Name.Length > 200)
             {
@@ -130,24 +130,24 @@ namespace CroquetScores.RavenDBtoMySql.Importers
                 tournament.Name = tournament.Name.Substring(0, 200);
             }
 
-            if (tournament.TimeZoneId.Length > 50)
+            if (tournament.TimeZoneInfo.Length > 50)
             {
-                Log.Error($"Tournament {tournament.Id} TimeZoneId is too long. {tournament.TimeZoneId}");
-                tournament.TimeZoneId = tournament.TimeZoneId.Substring(0, 50);
+                Log.Error($"Tournament {tournament.Id} TimeZoneInfo is too long. {tournament.TimeZoneInfo}");
+                tournament.TimeZoneInfo = tournament.TimeZoneInfo.Substring(0, 50);
             }
 
             command.Parameters["@TournamentKey"].Value = tournamentKey;
             command.Parameters["@Site"].Value = site;
             command.Parameters["@Name"].Value = tournament.Name;
             command.Parameters["@Slug"].Value = tournament.Slug;
-            command.Parameters["@Start"].Value = tournament.Start;
-            command.Parameters["@Finish"].Value = tournament.Finish;
+            command.Parameters["@Starts"].Value = tournament.Starts;
+            command.Parameters["@Finishes"].Value = tournament.Finishes;
             command.Parameters["@CreatedBy_UserKey"].Value = createdByUserKey;
             command.Parameters["@IsArchived"].Value = tournament.IsArchived;
             command.Parameters["@IsMajorTournament"].Value = tournament.IsMajorTournament.GetValueOrDefault();
             command.Parameters["@SportType"].Value = tournament.SportType;
             command.Parameters["@TournamentType"].Value = tournament.TournamentType;
-            command.Parameters["@TimeZoneId"].Value = tournament.TimeZoneId;
+            command.Parameters["@TimeZoneInfo"].Value = tournament.TimeZoneInfo;
             command.Parameters["@Created"].Value = new DateTime(2024, 1, 1);
             command.Parameters["@LastUpdate"].Value = new DateTime(2024, 1, 1);
 
