@@ -14,13 +14,12 @@ namespace CroquetScores.RavenDBtoMySql.Importers
             using (var command = connection.CreateCommand())
             {
                 command.CommandText =
-                    "INSERT INTO tournament_managers (TournamentManagerKey, TournamentKey, UserKey, Created, LastUpdate) " +
-                    "VALUES (@TournamentManagerKey, @TournamentKey, @UserKey, @Created, @LastUpdate)";
+                    "INSERT INTO tournament_managers (TournamentManagerKey, TournamentKey, UserKey, LastUpdate) " +
+                    "VALUES (@TournamentManagerKey, @TournamentKey, @UserKey, @LastUpdate)";
 
                 command.Parameters.AddWithValue("@TournamentManagerKey", null);
                 command.Parameters.AddWithValue("@TournamentKey", null);
                 command.Parameters.AddWithValue("@UserKey", null);
-                command.Parameters.AddWithValue("@Created", null);
                 command.Parameters.AddWithValue("@LastUpdate", null);
 
                 // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
@@ -31,7 +30,6 @@ namespace CroquetScores.RavenDBtoMySql.Importers
                     command.Parameters["@TournamentManagerKey"].Value = Guid.NewGuid();
                     command.Parameters["@TournamentKey"].Value = tournamentKey;
                     command.Parameters["@UserKey"].Value = userKey;
-                    command.Parameters["@Created"].Value = new DateTime(2024, 1, 1);
                     command.Parameters["@LastUpdate"].Value = new DateTime(2024, 1, 1);
 
                     command.ExecuteNonQuery();

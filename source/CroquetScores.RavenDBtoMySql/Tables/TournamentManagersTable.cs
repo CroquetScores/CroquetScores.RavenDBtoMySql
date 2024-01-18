@@ -14,7 +14,6 @@ namespace CroquetScores.RavenDBtoMySql.Tables
                                       "TournamentManagerKey CHAR(36) NOT NULL," +
                                       "TournamentKey CHAR(36) NOT NULL," +
                                       "UserKey CHAR(36) NOT NULL," +
-                                      "Created DATETIME NOT NULL," +
                                       "LastUpdate DATETIME NOT NULL," +
                                       "PRIMARY KEY (TournamentManagerKey));";
                 command.ExecuteNonQuery();

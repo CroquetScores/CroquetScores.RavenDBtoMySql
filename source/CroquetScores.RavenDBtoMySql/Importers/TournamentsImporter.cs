@@ -81,7 +81,6 @@ namespace CroquetScores.RavenDBtoMySql.Importers
                 "SportType, " +
                 "TournamentType, " +
                 "TimeZoneInfo, " +
-                "Created, " +
                 "LastUpdate)" +
                 "VALUES (" +
                 "@TournamentKey, " +
@@ -96,7 +95,6 @@ namespace CroquetScores.RavenDBtoMySql.Importers
                 "@SportType, " +
                 "@TournamentType, " +
                 "@TimeZoneInfo, " +
-                "@Created, " +
                 "@LastUpdate)";
 
             command.Parameters.AddWithValue("@TournamentKey", null);
@@ -111,7 +109,6 @@ namespace CroquetScores.RavenDBtoMySql.Importers
             command.Parameters.AddWithValue("@SportType", null);
             command.Parameters.AddWithValue("@TournamentType", null);
             command.Parameters.AddWithValue("@TimeZoneInfo", null);
-            command.Parameters.AddWithValue("@Created", null);
             command.Parameters.AddWithValue("@LastUpdate", null);
 
             return command;
@@ -148,7 +145,6 @@ namespace CroquetScores.RavenDBtoMySql.Importers
             command.Parameters["@SportType"].Value = tournament.SportType;
             command.Parameters["@TournamentType"].Value = tournament.TournamentType;
             command.Parameters["@TimeZoneInfo"].Value = tournament.TimeZoneInfo;
-            command.Parameters["@Created"].Value = new DateTime(2024, 1, 1);
             command.Parameters["@LastUpdate"].Value = new DateTime(2024, 1, 1);
 
             command.ExecuteNonQuery();

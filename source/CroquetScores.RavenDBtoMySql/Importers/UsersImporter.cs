@@ -153,7 +153,6 @@ namespace CroquetScores.RavenDBtoMySql.Importers
                 "IsArchived," +
                 "CroquetScoresRavenDbKey," +
                 "GateballScoresRavenDbKey," +
-                "Created," +
                 "LastUpdate)" +
                 " VALUES (" +
                 "@UserKey," +
@@ -169,7 +168,6 @@ namespace CroquetScores.RavenDBtoMySql.Importers
                 "@IsArchived," +
                 "@CroquetScoresRavenDbKey," +
                 "@GateballScoresRavenDbKey," +
-                "@Created," +
                 "@LastUpdate)";
 
             command.Parameters.AddWithValue("@UserKey", null);
@@ -183,7 +181,6 @@ namespace CroquetScores.RavenDBtoMySql.Importers
             command.Parameters.AddWithValue("@LastSignOut", null);
             command.Parameters.AddWithValue("@FailedSignInAttempts", null);
             command.Parameters.AddWithValue("@IsArchived", null);
-            command.Parameters.AddWithValue("@Created", new DateTime(2024, 1, 1));
             command.Parameters.AddWithValue("@LastUpdate", new DateTime(2024, 1, 1));
             command.Parameters.AddWithValue("@CroquetScoresRavenDbKey", null);
             command.Parameters.AddWithValue("@GateballScoresRavenDbKey", null);

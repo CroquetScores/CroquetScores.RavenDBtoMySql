@@ -23,7 +23,6 @@ namespace CroquetScores.RavenDBtoMySql.Tables
                                       "SportType VARCHAR(3) NOT NULL, " +
                                       "TournamentType VARCHAR(20) NOT NULL, " +
                                       "TimeZoneInfo VARCHAR(50) NOT NULL, " +
-                                      "Created DATETIME NOT NULL, " +
                                       "LastUpdate DATETIME NOT NULL, " +
                                       "PRIMARY KEY (TournamentKey));";
                 command.ExecuteNonQuery();

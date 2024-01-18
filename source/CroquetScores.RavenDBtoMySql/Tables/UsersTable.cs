@@ -26,7 +26,6 @@ namespace CroquetScores.RavenDBtoMySql.Tables
                                       "IsArchived TINYINT NOT NULL," +
                                       "CroquetScoresRavenDbKey VARCHAR(50) NULL," +
                                       "GateballScoresRavenDbKey VARCHAR(50) NULL," +
-                                      "Created DATETIME NOT NULL," +
                                       "LastUpdate DATETIME NOT NULL," +
                                       "PRIMARY KEY (UserKey));";
                 command.ExecuteNonQuery();

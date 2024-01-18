@@ -17,7 +17,6 @@ namespace CroquetScores.RavenDBtoMySql.Tables
                 command.CommandText = "CREATE TABLE players (" +
                                       "PlayerKey CHAR(36) NOT NULL," +
                                       "Name VARCHAR(200)," +
-                                      "Created DATETIME NOT NULL," +
                                       "LastUpdate DATETIME NOT NULL, " +
                                       "PRIMARY KEY (PlayerKey));";
                 command.ExecuteNonQuery();
@@ -29,17 +28,14 @@ namespace CroquetScores.RavenDBtoMySql.Tables
                 command.CommandText = "INSERT INTO players (" +
                                       "PlayerKey, " +
                                       "Name, " +
-                                      "Created, " +
                                       "LastUpdate) " +
                                       "VALUES (" +
                                       "@PlayerKey, " +
                                       "@Name, " +
-                                      "@Created, " +
                                       "@LastUpdate);";
 
                 command.Parameters.AddWithValue("@PlayerKey", ByePlayerKey);
                 command.Parameters.AddWithValue("@Name", "Bye");
-                command.Parameters.AddWithValue("@Created", new DateTime(2024, 1, 1));
                 command.Parameters.AddWithValue("@LastUpdate", new DateTime(2024, 1, 1));
 
                 command.ExecuteNonQuery();
@@ -79,17 +75,14 @@ namespace CroquetScores.RavenDBtoMySql.Tables
                 command.CommandText = "INSERT INTO players (" +
                                       "PlayerKey," +
                                       "Name," +
-                                      "Created," +
                                       "LastUpdate) " +
                                       "VALUES (" +
                                       "@PlayerKey," +
                                       "@Name," +
-                                      "@Created," +
                                       "@LastUpdate)";
 
                 command.Parameters.AddWithValue("@PlayerKey", playerKey);
                 command.Parameters.AddWithValue("@Name", name);
-                command.Parameters.AddWithValue("@Created", new DateTime(2024, 1, 1));
                 command.Parameters.AddWithValue("@LastUpdate", new DateTime(2024, 1, 1));
 
                 command.ExecuteNonQuery();

@@ -20,7 +20,6 @@ namespace CroquetScores.RavenDBtoMySql.Tables
                                       "TypeProperties JSON NOT NULL," +
                                       "IsArchived BOOLEAN NOT NULL," +
                                       "RavenDbKey VARCHAR(50) NULL," +
-                                      "Created DATETIME NOT NULL," +
                                       "LastUpdate DATETIME NOT NULL," +
                                       "PRIMARY KEY (CompetitionKey));";
                 command.ExecuteNonQuery();

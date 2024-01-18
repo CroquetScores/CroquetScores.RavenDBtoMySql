@@ -14,9 +14,8 @@ namespace CroquetScores.RavenDBtoMySql.TableRows
             OrderBy =reader.GetInt32(3);
             Representing = reader.GetNullableString(4);
             Slug = reader.GetString(5);
-            Created = reader.GetDateTime(6);
-            LastUpdated = reader.GetDateTime(7);
-            RavenDbKey = reader.GetInt32(8);
+            LastUpdated = reader.GetDateTime(6);
+            RavenDbKey = reader.GetInt32(7);
         }
 
         public CompetitionPlayerRow(Guid competitionPlayerKey, Guid competitionKey, Guid playerKey, int orderBy, RavenDB.Documents.Types.CompetitionPlayer ravenCompetitionPlayer)
@@ -27,7 +26,6 @@ namespace CroquetScores.RavenDBtoMySql.TableRows
             OrderBy = orderBy;
             Representing = ravenCompetitionPlayer.Representing;
             Slug = ravenCompetitionPlayer.Slug;
-            Created = new DateTime(2024, 1, 1);
             LastUpdated = new DateTime(2024, 1, 1);
             RavenDbKey = ravenCompetitionPlayer._Id;
         }
@@ -38,7 +36,6 @@ namespace CroquetScores.RavenDBtoMySql.TableRows
         public int OrderBy { get; private set; }
         public string Representing { get; set; }
         public string Slug { get; private set; }
-        public DateTime Created { get; private set; }
         public DateTime LastUpdated { get; private set; }
         public int RavenDbKey { get; private set; }
     }

@@ -103,7 +103,6 @@ namespace CroquetScores.RavenDBtoMySql.Importers
                                       "TypeProperties," +
                                       "IsArchived," +
                                       "RavenDbKey," +
-                                      "Created," +
                                       "LastUpdate) " +
                                       "VALUES (" +
                                       "@CompetitionKey," +
@@ -115,7 +114,6 @@ namespace CroquetScores.RavenDBtoMySql.Importers
                                       "@TypeProperties," +
                                       "@IsArchived," +
                                       "@RavenDbKey," +
-                                      "@Created," +
                                       "@LastUpdate);";
 
                 command.Parameters.AddWithValue("@CompetitionKey", competitionKey);
@@ -127,7 +125,6 @@ namespace CroquetScores.RavenDBtoMySql.Importers
                 command.Parameters.AddWithValue("@TypeProperties", typeProperties);
                 command.Parameters.AddWithValue("@IsArchived", competition.IsArchived);
                 command.Parameters.AddWithValue("@RavenDbKey", competition.Id);
-                command.Parameters.AddWithValue("@Created", new DateTime(2024, 1, 1));
                 command.Parameters.AddWithValue("@LastUpdate", new DateTime(2024, 1, 1));
 
                 command.ExecuteNonQuery();
@@ -149,7 +146,6 @@ namespace CroquetScores.RavenDBtoMySql.Importers
             command.Parameters["@PlayerKey"].Value = competitionPlayerRow.PlayerKey;
             command.Parameters["@OrderBy"].Value = competitionPlayerRow.OrderBy;
             command.Parameters["@Representing"].Value = competitionPlayerRow.Representing;
-            command.Parameters["@Created"].Value = competitionPlayerRow.Created;
             command.Parameters["@LastUpdate"].Value = competitionPlayerRow.LastUpdated;
             command.Parameters["@RavenDbKey"].Value = competitionPlayerRow.RavenDbKey;
 
@@ -166,7 +162,6 @@ namespace CroquetScores.RavenDBtoMySql.Importers
                                   "PlayerKey," +
                                   "OrderBy," +
                                   "Representing," +
-                                  "Created," +
                                   "LastUpdate," +
                                   "RavenDbKey) " +
                                   "VALUES (" +
@@ -175,7 +170,6 @@ namespace CroquetScores.RavenDBtoMySql.Importers
                                   "@PlayerKey," +
                                   "@OrderBy," +
                                   "@Representing," +
-                                  "@Created," +
                                   "@LastUpdate," +
                                   "@RavenDbKey);";
 
@@ -184,7 +178,6 @@ namespace CroquetScores.RavenDBtoMySql.Importers
             command.Parameters.AddWithValue("@PlayerKey", null);
             command.Parameters.AddWithValue("@OrderBy", null);
             command.Parameters.AddWithValue("@Representing", null);
-            command.Parameters.AddWithValue("@Created", null);
             command.Parameters.AddWithValue("@LastUpdate", null);
             command.Parameters.AddWithValue("@RavenDbKey", null);
 
@@ -228,7 +221,6 @@ namespace CroquetScores.RavenDBtoMySql.Importers
                     command.Parameters["@WinnerScore"].Value = game.Winner.Score;
                     command.Parameters["@LoserPlayerKey"].Value = GetPlayerKey(game.Loser.PlayerId, competitionPlayerRows);
                     command.Parameters["@LoserScore"].Value = game.Loser.Score;
-                    command.Parameters["@Created"].Value = game.CreatedAt;
                     command.Parameters["@LastUpdate"].Value = new DateTime(2024, 1, 1);
 
                     command.ExecuteNonQuery();
@@ -268,7 +260,6 @@ namespace CroquetScores.RavenDBtoMySql.Importers
                                   "WinnerScore," +
                                   "LoserPlayerKey," +
                                   "LoserScore," +
-                                  "Created," +
                                   "LastUpdate) " +
                                   "VALUES (" +
                                   "@GameKey," +
@@ -278,7 +269,6 @@ namespace CroquetScores.RavenDBtoMySql.Importers
                                   "@WinnerScore," +
                                   "@LoserPlayerKey," +
                                   "@LoserScore," +
-                                  "@Created," +
                                   "@LastUpdate);";
 
             command.Parameters.AddWithValue("@GameKey", null);
@@ -288,7 +278,6 @@ namespace CroquetScores.RavenDBtoMySql.Importers
             command.Parameters.AddWithValue("@WinnerScore", null);
             command.Parameters.AddWithValue("@LoserPlayerKey", null);
             command.Parameters.AddWithValue("@LoserScore", null);
-            command.Parameters.AddWithValue("@Created", null);
             command.Parameters.AddWithValue("@LastUpdate", null);
 
             return command;

@@ -18,7 +18,6 @@ namespace CroquetScores.RavenDBtoMySql.Tables
                                       "WinnerScore VARCHAR(100) NOT NULL," +
                                       "LoserPlayerKey CHAR(36) NOT NULL," +
                                       "LoserScore VARCHAR(100) NOT NULL," +
-                                      "Created DATETIME NOT NULL," +
                                       "LastUpdate DATETIME NOT NULL," +
                                       "PRIMARY KEY (GameKey));";
 
