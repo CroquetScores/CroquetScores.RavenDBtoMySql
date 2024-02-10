@@ -75,7 +75,6 @@ namespace CroquetScores.RavenDBtoMySql.Importers
                 "Slug, " +
                 "Starts, " +
                 "Finishes, " +
-                "CreatedBy_UserKey, " +
                 "IsArchived, " +
                 "IsMajorTournament, " +
                 "SportType, " +
@@ -89,7 +88,6 @@ namespace CroquetScores.RavenDBtoMySql.Importers
                 "@Slug, " +
                 "@Starts, " +
                 "@Finishes, " +
-                "@CreatedBy_UserKey, " +
                 "@IsArchived, " +
                 "@IsMajorTournament, " +
                 "@SportType, " +
@@ -103,7 +101,6 @@ namespace CroquetScores.RavenDBtoMySql.Importers
             command.Parameters.AddWithValue("@Slug", null);
             command.Parameters.AddWithValue("@Starts", null);
             command.Parameters.AddWithValue("@Finishes", null);
-            command.Parameters.AddWithValue("@CreatedBy_UserKey", null);
             command.Parameters.AddWithValue("@IsArchived", null);
             command.Parameters.AddWithValue("@IsMajorTournament", null);
             command.Parameters.AddWithValue("@SportType", null);
@@ -139,7 +136,6 @@ namespace CroquetScores.RavenDBtoMySql.Importers
             command.Parameters["@Slug"].Value = tournament.Slug;
             command.Parameters["@Starts"].Value = tournament.Starts;
             command.Parameters["@Finishes"].Value = tournament.Finishes;
-            command.Parameters["@CreatedBy_UserKey"].Value = createdByUserKey;
             command.Parameters["@IsArchived"].Value = tournament.IsArchived;
             command.Parameters["@IsMajorTournament"].Value = tournament.IsMajorTournament.GetValueOrDefault();
             command.Parameters["@SportType"].Value = tournament.SportType;

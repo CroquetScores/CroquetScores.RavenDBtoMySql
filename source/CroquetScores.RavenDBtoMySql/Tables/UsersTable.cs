@@ -22,7 +22,7 @@ namespace CroquetScores.RavenDBtoMySql.Tables
                                       "ConfirmedAt DATETIME NULL," +
                                       "LastSignIn DATETIME NULL," +
                                       "LastSignOut DATETIME NULL," +
-                                      "FailedSignInAttempts INT NULL," +
+                                      "FailedSignInAttempts INT NOT NULL," +
                                       "IsArchived TINYINT NOT NULL," +
                                       "CroquetScoresRavenDbKey VARCHAR(50) NULL," +
                                       "GateballScoresRavenDbKey VARCHAR(50) NULL," +

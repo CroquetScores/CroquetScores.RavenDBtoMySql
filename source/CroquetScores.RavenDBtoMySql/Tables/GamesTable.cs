@@ -36,13 +36,13 @@ namespace CroquetScores.RavenDBtoMySql.Tables
                 command.ExecuteNonQuery();
 
                 command.CommandText = "ALTER TABLE games " +
-                                      "ADD INDEX WinnerPlayerKey (WinnerPlayerKey ASC) VISIBLE;";
+                                      "ADD INDEX OrderBy (CompetitionKey ASC, OrderBy ASC) VISIBLE;";
                 command.ExecuteNonQuery();
 
                 command.CommandText = "ALTER TABLE games " +
-                                      "ADD CONSTRAINT fk_players_games_WinnerPlayerKey " +
+                                      "ADD CONSTRAINT fk_competition_players_games_WinnerPlayerKey " +
                                       "FOREIGN KEY (WinnerPlayerKey) " +
-                                      "REFERENCES players (PlayerKey)" +
+                                      "REFERENCES competition_players (CompetitionPlayerKey)" +
                                       "ON DELETE NO ACTION " +
                                       "ON UPDATE NO ACTION;";
                 command.ExecuteNonQuery();
@@ -52,9 +52,9 @@ namespace CroquetScores.RavenDBtoMySql.Tables
                 command.ExecuteNonQuery();
 
                 command.CommandText = "ALTER TABLE games " +
-                                      "ADD CONSTRAINT fk_players_games_LoserPlayerKey " +
+                                      "ADD CONSTRAINT fk_competition_players_games_LoserPlayerKey " +
                                       "FOREIGN KEY (LoserPlayerKey) " +
-                                      "REFERENCES players (PlayerKey)" +
+                                      "REFERENCES competition_players (CompetitionPlayerKey)" +
                                       "ON DELETE NO ACTION " +
                                       "ON UPDATE NO ACTION;";
                 command.ExecuteNonQuery();

@@ -16,7 +16,7 @@ namespace CroquetScores.RavenDBtoMySql.Tables
             {
                 command.CommandText = "CREATE TABLE players (" +
                                       "PlayerKey CHAR(36) NOT NULL," +
-                                      "Name VARCHAR(200)," +
+                                      "Name VARCHAR(200) NOT NULL," +
                                       "LastUpdate DATETIME NOT NULL, " +
                                       "PRIMARY KEY (PlayerKey));";
                 command.ExecuteNonQuery();

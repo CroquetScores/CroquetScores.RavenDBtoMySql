@@ -17,7 +17,7 @@ namespace CroquetScores.RavenDBtoMySql.Tables
                                       "Name VARCHAR(200) NOT NULL," +
                                       "Slug VARCHAR(200) NOT NULL," +
                                       "Type VARCHAR(10) NOT NULL," +
-                                      "TypeProperties JSON NOT NULL," +
+                                      "TypeProperties JSON NULL," +
                                       "IsArchived BOOLEAN NOT NULL," +
                                       "RavenDbKey VARCHAR(50) NULL," +
                                       "LastUpdate DATETIME NOT NULL," +
